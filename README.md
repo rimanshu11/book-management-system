@@ -1,4 +1,4 @@
-# book_management_system
+# book-management-system
 Book Management System is an easy-to-use tool built to help you organize and manage books in libraries, bookstores, or personal collections. It makes it simple to add new books, update existing ones, delete books you no longer need, and search for specific titles. You can also manage important book details like the title, author, genre, ISBN. 
 
 # Phases for Book Management System (BMS):
@@ -55,3 +55,27 @@ c) User Acceptance Testing (UAT):
 6. Maintenance Phase:
 	Regular updates for bug fixes, security patches, and feature enhancements.
 	Performance monitoring and scaling based on user growth.
+
+# Setup Instruction
+
+1) clone the github repository
+
+```bash
+git clone 'https://github.com/rimanshu11/book-management-system.git'
+```
+2) Keep the folder structure as this.
+.
+└── folder structure/
+    └── book-management-system/
+        ├── diagram/
+        │   ├── 3 tier architecture
+        │   └── client server architecture
+        ├── Readme.md
+        ├── index.html
+        └── style.css
+
+3) Start the Live server
+
+# Technology used
+
+Frontend- HTML, CSS, Javascript
