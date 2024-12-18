@@ -11,38 +11,60 @@
     <div class="container">
         <h1 class="main-heading">Book Management System</h1>
         <form id="formData">
+            <div class="form">
                 <div class="input">
                     <label for="title">Book Title</label>
-                    <input type="text" id="title" name="title" placeholder="Enter Book Title" ><br>
+                    <input type="text" name="title" id="title"  placeholder="Enter Book Title">
                 </div>
                 <div class="input">
                     <label for="author">Author</label>
-                    <input type="text" id="author" name="author" placeholder="Enter Author's Name" ><br>
+                    <input type="text" id="author" name="author" placeholder="Enter Author's Name">
                 </div>
                 <div class="input">
                     <label for="isbn">ISBN</label>
-                    <input type="text" id="isbn" name="isbn" placeholder="Enter ISBN Number" ><br>
+                    <input type="text" name="isbn" id="isbn"  placeholder="Enter ISBN Number">
                 </div>
                 <div class="input">
                     <label for="publicationDate">Publication Date</label>
-                    <input type="date" id="publicationDate" name="publicationDate" ><br>
+                    <input type="date" id="publicationDate" name="publicationDate">
                 </div>
                 <div class="input">
                     <label for="genre">Genre</label>
-                    <select id="genre" name="genre" >
+                    <select name="genre" id="genre" >
                         <option value="" disabled selected>Select Genre</option>
                         <option value="Fiction">Fiction</option>
-                        <option value="Nonfiction">Non-Fiction</option>
+                        <option value="Non-Fiction">Non-Fiction</option>
                         <option value="Mystery">Mystery</option>
                         <option value="Fantasy">Fantasy</option>
-                        <option value="ScienceFiction">Science Fiction</option>
+                        <option value="Science-Fiction">Science Fiction</option>
                         <option value="Biography">Biography</option>
                         <option value="History">History</option>
                     </select>
                 </div>
                 <button type="submit">Add Book</button>
+            </div>
         </form>
+        <div>
+            <table id="tableData">
+                <thead>
+                  <tr>
+                    <th>Author</th>
+                    <th>Title</th>
+                    <th>ISBN</th>
+                    <th>Publication Date</th>
+                    <th>Genre</th>
+                    <th>Book Age</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+              
+        </div>
     </div>
+
 <script src="./assets/js/script.js"></script>
 </body>
 </html>

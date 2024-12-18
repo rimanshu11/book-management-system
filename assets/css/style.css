@@ -41,3 +41,44 @@ button {
     border-radius: 5px;
     cursor: pointer;
 }
+
+
+input:invalid {
+    border-color: red;
+}
+
+select:invalid {
+    border-color: red;
+}
+
+input, select {
+    border: 1px solid #ccc;
+    padding: 8px;
+    width: 100%;
+    margin-top: 5px;
+}
+
+input:focus, select:focus {
+    border-color: #5b9bd5;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 2rem;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  td>button{
+    padding: 2px;
+    margin: 2px;
+  }
+
+  #tableData td {
+    word-wrap: break-word; 
+    white-space: normal; 
+  }
+  
