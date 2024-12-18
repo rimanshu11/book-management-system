@@ -52,7 +52,19 @@
                     <th>Title</th>
                     <th>ISBN</th>
                     <th>Publication Date</th>
-                    <th>Genre</th>
+                    <th>
+                        <label for="genre">Genre</label>
+                        <select id="genreFilter" name="genre" onchange="filterGenre()">
+                            <option value="" selected>Select Genre</option>
+                            <option value="Fiction">Fiction</option>
+                            <option value="Non-Fiction">Non-Fiction</option>
+                            <option value="Mystery">Mystery</option>
+                            <option value="Fantasy">Fantasy</option>
+                            <option value="Science-Fiction">Science Fiction</option>
+                            <option value="Biography">Biography</option>
+                            <option value="History">History</option>
+                        </select>
+                    </th>
                     <th>Book Age</th>
                     <th>Actions</th>
                   </tr>

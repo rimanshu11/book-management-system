@@ -1,5 +1,6 @@
 let form = document.getElementById("formData");
 const formData = [];
+let editIndex = null;
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -17,11 +18,41 @@ form.addEventListener('submit', (e) => {
     return;
   }
 
+  const bookAge = calculateBookAge(publicationDate);
+  console.log("Book Age", bookAge);
 
-    formData.push({ title, author, isbn, publicationDate, genre });
-  updateTableData(formData);
-  form.reset();
+  if(bookAge){
+    formData.push({ title, author, isbn, publicationDate, genre, bookAge });
+    updateTableData(formData);
+    form.reset();
+  }
+  
 });
+
+const calculateBookAge = (publicationDate) => {
+  const currentDate = new Date();
+  const pubDate = new Date(publicationDate);
+  let ageText = '';
+  if (currentDate < pubDate) {
+    alert("Wrong publication date!");
+    return;
+  } else {
+    const ageInYears = currentDate.getFullYear() - pubDate.getFullYear();
+    const ageInMonths = currentDate.getMonth() - pubDate.getMonth();
+    const ageInDays = currentDate.getDate() - pubDate.getDate();
+
+    if (ageInYears > 0) {
+      ageText = `${ageInYears} year(s)`;
+    } else if (ageInMonths > 0) {
+      ageText = `${ageInMonths} month(s)`;
+    } else if (ageInDays > 0) {
+      ageText = `${ageInDays} day(s)`;
+    } else {
+      ageText = `Less than a day old`;
+    }
+  }
+  return ageText;
+}
 
 const updateTableData = (books) => {
   const tableBody = document.querySelector("#tableData tbody");
@@ -52,21 +83,7 @@ const updateTableData = (books) => {
     const bookAge = document.createElement('td');
     bookAge.textContent = data.bookAge;
     row.appendChild(bookAge);
-
-
-    const action = document.createElement('td');
-
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Delete';
-    deleteButton.onclick = () => deleteBook(index);
-    action.appendChild(deleteButton);
-
-    const editButton = document.createElement('button');
-    editButton.textContent = 'Edit';
-    editButton.onclick = () => editBook(index);
-    action.appendChild(editButton);
-
-    row.appendChild(action);
+    
     tableBody.appendChild(row);
   });
 }
