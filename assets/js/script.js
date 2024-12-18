@@ -1,6 +1,5 @@
 let form = document.getElementById("formData");
 const formData = [];
-let editIndex = null;
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -26,7 +25,7 @@ form.addEventListener('submit', (e) => {
     updateTableData(formData);
     form.reset();
   }
-  
+
 });
 
 const calculateBookAge = (publicationDate) => {
@@ -83,7 +82,22 @@ const updateTableData = (books) => {
     const bookAge = document.createElement('td');
     bookAge.textContent = data.bookAge;
     row.appendChild(bookAge);
-    
+
+
+    const action = document.createElement('td');
+
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.onclick = () => deleteBook(index);
+    action.appendChild(deleteButton);
+
+
+    row.appendChild(action);
     tableBody.appendChild(row);
   });
+}
+
+const deleteBook = (index) => {
+  formData.splice(index, 1); 
+  updateTableData(formData);
 }
