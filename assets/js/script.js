@@ -122,3 +122,12 @@ const editBook = (index) => {
   editIndex = index;
 }
 
+document.getElementById('genreFilter').addEventListener('change', filterGenre);
+function filterGenre(e){
+    const selectedGenre = this.value;
+    const filterdFormData = selectedGenre ? formData.filter(book=>
+      book.genre == selectedGenre
+    )   : formData
+    // console.log("Filterd form data",filterdFormData);
+    updateTableData(filterdFormData)
+}
