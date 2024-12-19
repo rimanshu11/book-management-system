@@ -1,5 +1,6 @@
 let form = document.getElementById("formData");
 const formData = [];
+let editIndex = null;
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -20,12 +21,15 @@ form.addEventListener('submit', (e) => {
   const bookAge = calculateBookAge(publicationDate);
   console.log("Book Age", bookAge);
 
-  if(bookAge){
+  if (editIndex !== null) {
+    formData[editIndex] = { title, author, isbn, publicationDate, genre, bookAge };
+    editIndex = null;
+  } else {
     formData.push({ title, author, isbn, publicationDate, genre, bookAge });
-    updateTableData(formData);
-    form.reset();
   }
 
+  updateTableData(formData);
+  form.reset();
 });
 
 const calculateBookAge = (publicationDate) => {
@@ -91,6 +95,10 @@ const updateTableData = (books) => {
     deleteButton.onclick = () => deleteBook(index);
     action.appendChild(deleteButton);
 
+    const editButton = document.createElement('button');
+    editButton.textContent = 'Edit';
+    editButton.onclick = () => editBook(index);
+    action.appendChild(editButton);
 
     row.appendChild(action);
     tableBody.appendChild(row);
@@ -99,5 +107,18 @@ const updateTableData = (books) => {
 
 const deleteBook = (index) => {
   formData.splice(index, 1); 
-  updateTableData(formData);
+  updateTableData();
 }
+
+const editBook = (index) => {
+  const book = formData[index];
+
+  document.getElementById('title').value = book.title;
+  document.getElementById('author').value = book.author;
+  document.getElementById('isbn').value = book.isbn;
+  document.getElementById('publicationDate').value = book.publicationDate;
+  document.getElementById('genre').value = book.genre;
+
+  editIndex = index;
+}
+

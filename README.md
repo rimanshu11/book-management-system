@@ -64,15 +64,18 @@ c) User Acceptance Testing (UAT):
 git clone 'https://github.com/rimanshu11/book-management-system.git'
 ```
 2) Keep the folder structure as this.
-.
-└── folder structure/
-    └── book-management-system/
-        ├── diagram/
-        │   ├── 3 tier architecture
-        │   └── client server architecture
-        ├── Readme.md
-        ├── index.html
-        └── style.css
+book-management-system/
+├── assets/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── script.js
+├── diagram/
+│   ├── 3-tier-architecture/
+│   ├── client-server-architecture/
+│   └── er-diagram/
+└── readme.md
+
 
 3) Start the Live server
 
