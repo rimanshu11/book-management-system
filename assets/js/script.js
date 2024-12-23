@@ -1,7 +1,43 @@
 let form = document.getElementById("formData");
-const formData = [];
+let formData = [];
 let editIndex = null;
 
+const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=genre:science+fiction+history+fantasy+biography+mystery`;
+// console.log(apiUrl);
+
+// IIFE function to call the api for fetchinng book details...
+(async () => {
+  fetch(apiUrl)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Network Error");
+      }
+    })
+    .then(data => {
+      const apiData = data.items;
+      const transformData = apiData
+      //handle api data using filter so undefined data cannot be save.
+      .filter(data => (data.volumeInfo.title && data.volumeInfo.authors && data.volumeInfo.categories && data.volumeInfo.industryIdentifiers && data.volumeInfo.publishedDate))
+      .map((data)=>({
+          title: data.volumeInfo.title,
+          author: data.volumeInfo.authors,
+          genre: data.volumeInfo.categories?.[0],
+          isbn: data.volumeInfo.industryIdentifiers,
+          publicationDate: data.volumeInfo.publishedDate
+      }))
+      formData = transformData
+      transformData.length = 0;
+      updateTableData(formData);
+    })
+    .catch(error => {
+      console.log("Error:", error);
+    });
+})();
+
+
+// validation of data from form...
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const title = document.getElementById('title').value.trim();
@@ -18,8 +54,7 @@ form.addEventListener('submit', (e) => {
     return;
   }
 
-  const bookAge = calculateBookAge(publicationDate);
-  console.log("Book Age", bookAge);
+  const bookAge = calculateBookAge(publicationDate); // calling book age calculation function
 
   if (editIndex !== null) {
     formData[editIndex] = { title, author, isbn, publicationDate, genre, bookAge };
@@ -27,10 +62,13 @@ form.addEventListener('submit', (e) => {
   } else {
     formData.push({ title, author, isbn, publicationDate, genre, bookAge });
   }
-
-  updateTableData(formData);
-  form.reset();
+  console.log("formdata after add", formData);
+  
+  updateTableData(formData); //passing data from form to updateTableData function for display
+  form.reset(); //after successfully added form data empty the form.
 });
+
+// Function to calculate the age of book...
 
 const calculateBookAge = (publicationDate) => {
   const currentDate = new Date();
@@ -55,79 +93,87 @@ const calculateBookAge = (publicationDate) => {
     }
   }
   return ageText;
-}
+};
+
+// Function to display and update the table...
 
 const updateTableData = (books) => {
   const tableBody = document.querySelector("#tableData tbody");
   tableBody.innerHTML = '';
+  
   books.forEach((data, index) => {
-    const row = document.createElement('tr');
+      const row = document.createElement('tr');
+      const author = document.createElement('td');
+      author.textContent = data.author[0];
+      row.appendChild(author);
 
-    const title = document.createElement('td');
-    title.textContent = data.title;
-    row.appendChild(title);
+      const title = document.createElement('td');
+      title.textContent = data.title;
+      row.appendChild(title);
 
-    const author = document.createElement('td');
-    author.textContent = data.author;
-    row.appendChild(author);
+      const isbn = document.createElement('td');
+      isbn.textContent = data.isbn[0].identifier || data.isbn;
+      row.appendChild(isbn);
 
-    const isbn = document.createElement('td');
-    isbn.textContent = data.isbn;
-    row.appendChild(isbn);
+      const pDate = document.createElement('td');
+      const fetchPublishDate = data.publicationDate;
+      pDate.textContent = fetchPublishDate;
+      const calculateFetchBookAge = calculateBookAge(fetchPublishDate);
+      row.appendChild(pDate);
 
-    const pDate = document.createElement('td');
-    pDate.textContent = data.publicationDate;
-    row.appendChild(pDate);
+      const genre = document.createElement('td');
+      genre.textContent = data.genre;
+      row.appendChild(genre);
 
-    const genre = document.createElement('td');
-    genre.textContent = data.genre;
-    row.appendChild(genre);
+      const bookAge = document.createElement('td');
+      bookAge.textContent = calculateFetchBookAge; // Use calculated age here
+      row.appendChild(bookAge);
 
-    const bookAge = document.createElement('td');
-    bookAge.textContent = data.bookAge;
-    row.appendChild(bookAge);
+      const action = document.createElement('td');
 
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.onclick = () => deleteBook(index);
+      action.appendChild(deleteButton);
 
-    const action = document.createElement('td');
+      const editButton = document.createElement('button');
+      editButton.textContent = 'Edit';
+      editButton.onclick = () => editBook(index);
+      action.appendChild(editButton);
 
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Delete';
-    deleteButton.onclick = () => deleteBook(index);
-    action.appendChild(deleteButton);
-
-    const editButton = document.createElement('button');
-    editButton.textContent = 'Edit';
-    editButton.onclick = () => editBook(index);
-    action.appendChild(editButton);
-
-    row.appendChild(action);
-    tableBody.appendChild(row);
+      row.appendChild(action);
+      tableBody.appendChild(row);
+    
   });
-}
+};
+
+// Function to delete listed data...
 
 const deleteBook = (index) => {
-  formData.splice(index, 1); 
-  updateTableData();
-}
+  formData.splice(index, 1);
+  updateTableData(formData);
+};
+
+// Function to edit listed data...
 
 const editBook = (index) => {
   const book = formData[index];
-
   document.getElementById('title').value = book.title;
   document.getElementById('author').value = book.author;
   document.getElementById('isbn').value = book.isbn;
   document.getElementById('publicationDate').value = book.publicationDate;
   document.getElementById('genre').value = book.genre;
-
   editIndex = index;
-}
+};
+
+// Function to filter data based on genre...
 
 document.getElementById('genreFilter').addEventListener('change', filterGenre);
-function filterGenre(e){
-    const selectedGenre = this.value;
-    const filterdFormData = selectedGenre ? formData.filter(book=>
-      book.genre == selectedGenre
-    )   : formData
-    // console.log("Filterd form data",filterdFormData);
-    updateTableData(filterdFormData)
+function filterGenre(e) {
+  const selectedGenre = this.value;
+  console.log(selectedGenre);
+  const filteredFormData = selectedGenre ? formData.filter(book =>
+    book.genre   == selectedGenre
+  ) : formData;
+  updateTableData(filteredFormData);
 }
