@@ -4,7 +4,6 @@ let editIndex = null;
 const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=genre:science+fiction+history+fantasy+biography+mystery`;
 
 
-
 // IIFE function to call the api for fetchinng book details...
 (async () => {
   fetch(apiUrl)
@@ -36,6 +35,51 @@ const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=genre:science+fict
       console.log("Error:", error);
     });
 })();
+
+
+
+// Function to search book based on title...
+const searchBook = async (e) => {
+  e.preventDefault();
+  const searchValue = document.getElementById('search').value.trim().toLowerCase();
+  if (searchValue === "") {
+    updateTableData(formData); // Show all books from formData
+  } else {
+    try {
+      // Fetch books based on the title search
+      const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=title:${searchValue}`);
+      const data = await response.json();
+      
+      if (response.ok && data.items) {
+        const filteredBooks = data.items
+        .filter(data => {
+          const title = data.volumeInfo.title.toLowerCase();
+          return title.includes(searchValue);
+        })
+        .map((data) => ({
+            title: data.volumeInfo.title,
+            author: data.volumeInfo.authors,
+            genre: data.volumeInfo.categories?.[0].toLowerCase(),
+            isbn: data.volumeInfo.industryIdentifiers?.[0].identifier,
+            publicationDate: data.volumeInfo.publishedDate
+        }));
+        
+        if(filteredBooks.length < 1){
+          alert("No book found");
+          updateTableData(formData);
+        }else{
+          updateTableData(filteredBooks);
+        }
+        
+      } else {
+        alert("No books found for the search term");
+        updateTableData(formData);
+      }
+    } catch (error) {
+      console.log("Error fetching books:", error);
+    }
+  }
+};
 
 
 
