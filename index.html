@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Management System</title>
-    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="./assets/css/style.css"/>
 </head>
 <body>
+
     <div class="container">
         <h1 class="main-heading">Book Management System</h1>
-        <!-- form to perform add data -->
         <form id="formData">
             <div class="form">
                 <div class="input">
@@ -32,27 +32,21 @@
                     <label for="genre">Genre</label>
                     <select name="genre" id="genre" >
                         <option value="" disabled selected>Select Genre</option>
-                        <option value="fiction">Fiction</option>
-                        <option value="non fiction">Non-Fiction</option>
-                        <option value="mystery">Mystery</option>
-                        <option value="fantasy">Fantasy</option>
-                        <option value="science fiction">Science Fiction</option>
-                        <option value="biography">Biography</option>
-                        <option value="novel">Novel</option>
-                        <option value="reference">Reference</option>
-                        <option value="history">History</option>
+                        <option value="Fiction">Fiction</option>
+                        <option value="Non-Fiction">Non-Fiction</option>
+                        <option value="Mystery">Mystery</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="Science-Fiction">Science Fiction</option>
+                        <option value="Biography">Biography</option>
+                        <option value="History">History</option>
                     </select>
                 </div>
                 <button type="submit">Add Book</button>
             </div>
         </form>
         <div>
-            <!-- search box and button -->
-             <div id="searchBox">
-                 <input type="text" id="search" placeholder="Search book by Title" />
-                 <button id="searchBtn" onclick="searchBook(event)">Search</button>
-             </div>
-            <!-- table for display data -->
+          <input type="text" id="search" placeholder="Search book by Title" />
+            <button onclick="searchBook(event)">Search</button>
             <table id="tableData">
                 <thead>
                   <tr>
@@ -63,16 +57,14 @@
                     <th>
                         <label for="genre">Genre</label>
                         <select id="genreFilter" name="genre" onchange="filterGenre()">
-                            <option value="">Select Genre</option>
-                            <option value="fiction">Fiction</option>
-                            <option value="non fiction">Non-Fiction</option>
-                            <option value="mystery">Mystery</option>
-                            <option value="fantasy">Fantasy</option>
-                            <option value="science fiction">Science Fiction</option>
-                            <option value="biography">Biography</option>
-                            <option value="novel">Novel</option>
-                            <option value="reference">Reference</option>
-                            <option value="history">History</option>
+                            <option value="" selected>Select Genre</option>
+                            <option value="Fiction">Fiction</option>
+                            <option value="Non-Fiction">Non-Fiction</option>
+                            <option value="Mystery">Mystery</option>
+                            <option value="Fantasy">Fantasy</option>
+                            <option value="Science-Fiction">Science Fiction</option>
+                            <option value="Biography">Biography</option>
+                            <option value="History">History</option>
                         </select>
                     </th>
                     <th>Book Age</th>
@@ -88,5 +80,6 @@
     </div>
 
 <script src="./assets/js/script.js"></script>
+<script src="./assets/js/fetchBook.js"></script>
 </body>
 </html>
