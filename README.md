@@ -95,7 +95,9 @@ git clone 'https://github.com/rimanshu11/book-management-system.git'
 
  book-management-system/
     ├── assets/
-    │   ├── js/s
+		├── css/
+    │   │   └── style.css
+    │   ├── js/
     │   │   └── script.js
     ├── diagram/
     │   ├── 3-tier-architecture/
