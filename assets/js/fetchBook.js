@@ -64,14 +64,17 @@ const searchBook = async (e) => {
 
 const transformData = (apiData) => {
   return apiData
-    .filter(
-      (data) =>
+    .filter((data) => {
+      const industryIdentifier = data.volumeInfo.industryIdentifiers?.[0]?.identifier;
+      return (
         data.volumeInfo.title &&
         data.volumeInfo.authors &&
         data.volumeInfo.categories &&
-        data.volumeInfo.industryIdentifiers &&
-        data.volumeInfo.publishedDate
-    )
+        industryIdentifier &&
+        data.volumeInfo.publishedDate &&
+        !isNaN(industryIdentifier)
+      );
+    })
     .map((data) => ({
       title: data.volumeInfo.title,
       author: data.volumeInfo.authors,
@@ -80,3 +83,4 @@ const transformData = (apiData) => {
       publicationDate: data.volumeInfo.publishedDate,
     }));
 }
+
