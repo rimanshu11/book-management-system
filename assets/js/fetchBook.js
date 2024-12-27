@@ -1,6 +1,6 @@
 const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=`;
 
-// IIFE function to call the api for fetchinng book details...
+// IIFE function to call the API for fetching book details
 (async () => {
   fetch(`${apiUrl}genre:science+fiction+history+fantasy+biography+mystery`)
     .then((response) => {
@@ -12,13 +12,11 @@ const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=`;
     })
     .then((data) => {
       const apiData = data.items;
-      console.log(apiData);
-      
       const transformedData = transformData(apiData);
-      if(transformedData){
+      if (transformedData) {
         console.log(transformedData);
-        formData = transformedData;
-        updateTableData(formData);
+        book.bookList = transformedData; 
+        book.updateTableData(book.bookList);
       }
     })
     .catch((error) => {
@@ -26,15 +24,14 @@ const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=`;
     });
 })();
 
-// Function to search book based on title...
+// Function to search books based on title
 const searchBook = async (e) => {
   e.preventDefault();
   const searchValue = document.getElementById('search').value.trim().toLowerCase();
   if (searchValue === '') {
-    updateTableData(formData); // Show all books from formData
+    book.updateTableData(book.bookList);
   } else {
     try {
-      // Fetch books based on the title search
       const response = await fetch(`${apiUrl}title:${searchValue}`);
       const data = await response.json();
 
@@ -47,13 +44,13 @@ const searchBook = async (e) => {
         const transformedData = transformData(filteredBooks);
         if (transformedData.length < 1) {
           alert('No book found');
-          updateTableData(formData);
+          book.updateTableData(book.bookList);
         } else {
-          updateTableData(transformedData);
+          book.updateTableData(transformedData);
         }
       } else {
         alert('No books found for the search term');
-        updateTableData(formData);
+        book.updateTableData(book.bookList);
       }
     } catch (error) {
       console.log('Error fetching books:', error);
@@ -61,7 +58,7 @@ const searchBook = async (e) => {
   }
 };
 
-
+// Function to transform API data into custom structure
 const transformData = (apiData) => {
   return apiData
     .filter((data) => {
@@ -81,6 +78,6 @@ const transformData = (apiData) => {
       genre: data.volumeInfo.categories?.[0].toLowerCase(),
       isbn: data.volumeInfo.industryIdentifiers?.[0].identifier,
       publicationDate: data.volumeInfo.publishedDate,
+      bookAge: book.calculateBookAge(data.volumeInfo.publishedDate),
     }));
 }
-
