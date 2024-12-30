@@ -4,10 +4,15 @@ class Book {
     this.bookList = [];
     this.editIndex = null;
     this.form.addEventListener('submit', this.handleFormSubmit.bind(this));
+
     const genreFilter = document.getElementById('genreFilter');
     genreFilter.addEventListener('change', this.filterGenre.bind(this));
+
+    const sortBtn = document.getElementById('sortBtn');
+    sortBtn.addEventListener('change', this.sortBook.bind(this)); // Correctly adding the event listener
   }
-  // method to handle form on submit...
+
+  // Method to handle form on submit
   handleFormSubmit(event) {
     event.preventDefault();
 
@@ -36,8 +41,8 @@ class Book {
         bookAge,
       };
       this.editIndex = null;
-      alert('Book Edit Successfully!')
-      this.form.reset()
+      alert('Book Edited Successfully!');
+      this.form.reset();
     } else {
       this.bookList.push({ title, author, isbn, publicationDate, genre, bookAge });
       this.form.reset();
@@ -46,8 +51,7 @@ class Book {
     this.updateTableData(this.bookList);
   }
 
-// method to calculate the age of the book...
-
+  // Method to calculate the age of the book
   calculateBookAge(publicationDate) {
     const currentDate = new Date();
     const pubDate = new Date(publicationDate);
@@ -73,9 +77,7 @@ class Book {
     return ageText;
   }
 
-
-// method to update the table data after fetching or add book...
-
+  // Method to update the table data after adding a book
   updateTableData(books) {
     const tableBody = document.querySelector('#tableData tbody');
     tableBody.innerHTML = '';
@@ -134,9 +136,7 @@ class Book {
     });
   }
 
-
-  // method to delete specific book from the table...
-
+  // Method to delete specific book from the table
   deleteBook(index) {
     this.bookList.splice(index, 1);
     console.log('After Delete:', this.bookList);
@@ -144,8 +144,7 @@ class Book {
     alert('Book Deleted Successfully');
   }
 
-// method to edit a specific book...
-
+  // Method to edit a specific book
   editBook(index) {
     const book = this.bookList[index];
     document.getElementById('title').value = book.title;
@@ -156,14 +155,28 @@ class Book {
     this.editIndex = index;
   }
 
-
-  // method to categories book based on genre...
+  // Method to filter books by genre
   filterGenre(event) {
     const selectedGenre = event.target.value.trim().toLowerCase();
-    const filteredBooks = selectedGenre ? this.bookList.filter(book => book.genre.toLowerCase() === selectedGenre)
-      : this.bookList;
+    const filteredBooks = selectedGenre ? this.bookList.filter(book => book.genre.toLowerCase() === selectedGenre) : this.bookList;
     this.updateTableData(filteredBooks);
   }
-}
 
-const book = new Book();
+  // Method to sort books by title
+  sortBook(event) {
+    const sortBy = event.target.value; 
+    let sortedBook;
+
+    if (sortBy === 'asc') {
+      sortedBook = this.bookList.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sortBy === 'dsc') {
+      sortedBook = this.bookList.sort((a, b) => b.title.localeCompare(a.title));
+    } else{
+      sortedBook = this.bookList
+    }
+    this.updateTableData(sortedBook);
+  }
+
+
+
+}
