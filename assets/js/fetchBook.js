@@ -12,8 +12,6 @@ const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=`;
     })
     .then((data) => {
       const apiData = data.items;
-      console.log(apiData);
-      
       const transformedData = transformData(apiData);
       if(transformedData){
         console.log(transformedData);
@@ -64,17 +62,14 @@ const searchBook = async (e) => {
 
 const transformData = (apiData) => {
   return apiData
-    .filter((data) => {
-      const industryIdentifier = data.volumeInfo.industryIdentifiers?.[0]?.identifier;
-      return (
+    .filter(
+      (data) =>
         data.volumeInfo.title &&
         data.volumeInfo.authors &&
         data.volumeInfo.categories &&
-        industryIdentifier &&
-        data.volumeInfo.publishedDate &&
-        !isNaN(industryIdentifier)
-      );
-    })
+        data.volumeInfo.industryIdentifiers &&
+        data.volumeInfo.publishedDate
+    )
     .map((data) => ({
       title: data.volumeInfo.title,
       author: data.volumeInfo.authors,

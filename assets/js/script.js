@@ -78,10 +78,8 @@ const updateTableData = (books) => {
 
   books.forEach((data, index) => {
     const row = document.createElement('tr');
-    row.setAttribute('class', 'text-center even:bg-gray-200 odd:bg-white');
-
+    row.setAttribute('class', 'border');
     const author = document.createElement('td');
-    author.setAttribute('class', 'border');
     author.textContent = data.author;
     row.appendChild(author);
 
@@ -113,16 +111,15 @@ const updateTableData = (books) => {
     row.appendChild(bookAge);
 
     const action = document.createElement('td');
-    action.setAttribute('class', "border")
 
     const deleteButton = document.createElement('button');
-    deleteButton.setAttribute('class', 'w-full border font-semibold p-1 bg-red-600 text-white hover:bg-red-800');
+    deleteButton.setAttribute('class', 'border p-1 bg-[#606c38] text-white hover:bg-[#283618]');
     deleteButton.textContent = 'Delete';
     deleteButton.onclick = () => deleteBook(index);
     action.appendChild(deleteButton);
 
     const editButton = document.createElement('button');
-    editButton.setAttribute('class', 'w-full border font-semibold p-1 bg-blue-600 text-white hover:bg-blue-800');
+    editButton.setAttribute('class', 'border p-1 bg-[#606c38] text-white hover:bg-[#283618]');
     editButton.textContent = 'Edit';
     editButton.onclick = () => editBook(index);
     action.appendChild(editButton);
@@ -138,7 +135,6 @@ const deleteBook = (index) => {
   formData.splice(index, 1);
   updateTableData(formData);
   alert('Book Delete Successfully');
-  form.reset();
 };
 
 // Function to edit listed data...
