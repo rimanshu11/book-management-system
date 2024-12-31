@@ -21,7 +21,8 @@ form.addEventListener('submit', (e) => {
     return;
   }
 
-  const bookAge = calculateBookAge(publicationDate); // calling book age calculation function
+  const bookAge = calculateBookAge(publicationDate); 
+
 
   if (editIndex !== null) {
     formData[editIndex] = {
@@ -163,3 +164,21 @@ function filterGenre(e) {
     : formData;
   updateTableData(filteredFormData);
 }
+
+// function to sort by book title
+
+const sortBook = (e)=>{
+  const sortBy =  document.getElementById('sortBtn').value;
+  console.log(sortBy);
+  if(sortBy === 'asc'){
+    const sortedBook = formData.sort((a,b)=> a.title.localeCompare(b.title));
+    console.log(sortedBook);
+    updateTableData(sortedBook)
+  }
+  if(sortBy === 'dsc'){
+    const sortedBook = formData.sort((a,b)=> b.title.localeCompare(a.title));
+    console.log(sortedBook);
+    updateTableData(sortedBook)
+  }
+}
+

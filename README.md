@@ -108,6 +108,17 @@ git clone 'https://github.com/rimanshu11/book-management-system.git'
 
 3) Start the Live server
 
+## Purpose of the API
+
+The **Google Books API** provides a simple way to interact with Google's vast library of books. It enables developers to access and integrate book data into their applications. The API allows for searching books by keyword, retrieving detailed information such as book descriptions, cover images, authors, and more, making it ideal for building applications that require book data or book-related services.
+
+## Source of API
+
+This project uses the **Google Books API**, which is a service provided by Google that allows users to access books and related information from the Google Books database.
+
+- **API Documentation**: [Google Books API Documentation](https://developers.google.com/books)
+
+
 # Technology used
 
 Frontend- HTML, CSS, Javascript
