@@ -83,6 +83,13 @@ c) User Acceptance Testing (UAT):
    - Users can search for their favorite books by typing the title in a search bar.  
    - The search is performed asynchronously, providing instant results.
 
+7. **Sort by Title**
+   - Users can now sort the displayed books by **Title**.
+   - Books can be sorted in two ways:
+     - **Ascending Order**: Alphabetically from A to Z.
+     - **Descending Order**: Alphabetically from Z to A.
+   - The sorting can be applied using the dropdown menu under the "Sort by Title" section.
+
 
 # Setup Instruction
 

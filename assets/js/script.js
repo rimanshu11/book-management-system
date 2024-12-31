@@ -87,7 +87,7 @@ class Book {
       row.setAttribute('class', 'text-center even:bg-gray-200 odd:bg-white');
 
       const author = document.createElement('td');
-      author.setAttribute('class', 'border');
+      author.setAttribute('class', 'border font-semibold');
       author.textContent = data.author;
       row.appendChild(author);
 
@@ -110,6 +110,11 @@ class Book {
       genre.setAttribute('class', 'border');
       genre.textContent = data.genre;
       row.appendChild(genre);
+
+      const price = document.createElement('td');
+      price.setAttribute('class', 'border w-full');
+      price.innerHTML = this.discountCalculation(data.price, data.discountPrice);
+      row.appendChild(price);
 
       const bookAge = document.createElement('td');
       bookAge.setAttribute('class', 'border');
@@ -164,7 +169,7 @@ class Book {
 
   // Method to sort books by title
   sortBook(event) {
-    const sortBy = event.target.value; 
+    const sortBy = event.target.value;
     let sortedBook;
 
     if (sortBy === 'asc') {
@@ -177,6 +182,19 @@ class Book {
     this.updateTableData(sortedBook);
   }
 
-
+  discountCalculation(price, discountedPrice) {
+  if (price === discountedPrice) {
+    return `<span class="text-green-500 font-bold">${price.toFixed()} /-</span>`;
+  } else {
+    const percentage = (discountedPrice / price) * 100;
+    const discountPercentage = (100 - percentage).toFixed();
+    
+    return `
+      <span class="line-through text-red-500 font-semibold">${price.toFixed()} rs/-</span>
+      <span class="text-green-600 font-bold">(${discountPercentage}% Off)</span><br>
+      <span class=" text-blue-600  font-semibold">${discountedPrice.toFixed()} rs/-</span>
+    `;
+  }
+}
 
 }

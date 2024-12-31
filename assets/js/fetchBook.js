@@ -65,6 +65,8 @@ class FetchBook extends Book {
       .filter((data) => {
         const industryIdentifier = data.volumeInfo.industryIdentifiers?.[0]?.identifier;
         return (
+          data.saleInfo?.listPrice?.amount &&
+          data.saleInfo?.retailPrice?.amount &&
           data.volumeInfo.title &&
           data.volumeInfo.authors &&
           data.volumeInfo.categories &&
@@ -74,6 +76,8 @@ class FetchBook extends Book {
         );
       })
       .map((data) => ({
+        discountPrice: data.saleInfo.retailPrice.amount,
+        price: data.saleInfo.listPrice.amount,
         title: data.volumeInfo.title,
         author: data.volumeInfo.authors,
         genre: data.volumeInfo.categories?.[0].toLowerCase(),
