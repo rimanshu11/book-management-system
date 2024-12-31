@@ -56,6 +56,34 @@ c) User Acceptance Testing (UAT):
 	Regular updates for bug fixes, security patches, and feature enhancements.
 	Performance monitoring and scaling based on user growth.
 
+
+# Features
+
+1. **Add Book**  
+   - Users can add a new book to their collection using a simple form.  
+   - The form includes fields such as book title, author, genre, publication year, and more.
+
+2. **Delete Book**  
+   - Users can delete any book they have added to the system.  
+   - This helps keep the collection organized and up to date.
+
+3. **Edit Book**  
+   - Users can update the details of any listed book.  
+   - They can correct typos, change the author, or modify any other information.
+
+4. **Display Books**  
+   - All books added by the user are displayed in a tabular format.  
+   - This table allows for easy viewing and management of the book collection.
+
+5. **Fetch Books**  
+   - The system integrates with the Google Books API to fetch book details.  
+   - Users can search for books using this API and display them in the table.
+
+6. **Asynchronous Search**  
+   - Users can search for their favorite books by typing the title in a search bar.  
+   - The search is performed asynchronously, providing instant results.
+
+
 # Setup Instruction
 
 1) clone the github repository
@@ -64,17 +92,18 @@ c) User Acceptance Testing (UAT):
 git clone 'https://github.com/rimanshu11/book-management-system.git'
 ```
 2) Keep the folder structure as this.
-book-management-system/
-├── assets/
-│   ├── css/
-│   │   └── style.css
-│   ├── js/
-│   │   └── script.js
-├── diagram/
-│   ├── 3-tier-architecture/
-│   ├── client-server-architecture/
-│   └── er-diagram/
-└── readme.md
+
+ book-management-system/
+    ├── assets/
+		├── css/
+    │   │   └── style.css
+    │   ├── js/
+    │   │   └── script.js
+    ├── diagram/
+    │   ├── 3-tier-architecture/
+    │   ├── client-server-architecture/
+    │   └── er-diagram/
+    └── README.md
 
 
 3) Start the Live server
