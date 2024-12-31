@@ -23,6 +23,7 @@ form.addEventListener('submit', (e) => {
 
   const bookAge = calculateBookAge(publicationDate); 
 
+
   if (editIndex !== null) {
     formData[editIndex] = {
       title,
@@ -180,3 +181,4 @@ const sortBook = (e)=>{
     updateTableData(sortedBook)
   }
 }
+
