@@ -5,25 +5,36 @@ class FetchBook extends Book {
     this.fetchBooks();
   }
 
+  // Method to show the loader
+  showLoader() {
+    document.getElementById('loader').classList.remove('hidden');
+  }
+
+  // Method to hide the loader
+  hideLoader() {
+    document.getElementById('loader').classList.add('hidden');
+  }
+
   // Method to fetch books from the API
   async fetchBooks() {
+    this.showLoader();  // Show the loader before starting the fetch process
     try {
       const response = await fetch(`${this.apiUrl}genre:science+fiction+history+fantasy+biography+mystery`);
       if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        
+        const data = await response.json();        
         const transformedData = this.transformData(data.items);
         this.bookList = transformedData;
         console.log(this.bookList);
         
-        this.updateTableData(this.bookList); 
+        this.updateTableData(this.bookList);
       } else {
         alert("Network error");
         throw new Error('Network Error');
       }
     } catch (error) {
       console.log('Error:', error);
+    } finally {
+      this.hideLoader(); 
     }
   }
 
@@ -34,8 +45,9 @@ class FetchBook extends Book {
     if (searchValue === '') {
       this.updateTableData(this.bookList);
     } else {
+      this.showLoader();
       try {
-        const response = await fetch(`${this.apiUrl}title:${searchValue}`);
+        const response = await fetch(`${this.apiUrl}${searchValue}`);
         const data = await response.json();
         if (response.ok && data.items) {
           const filteredBooks = data.items.filter((data) => {
@@ -55,6 +67,8 @@ class FetchBook extends Book {
         }
       } catch (error) {
         console.log('Error fetching books:', error);
+      } finally {
+        this.hideLoader();
       }
     }
   }

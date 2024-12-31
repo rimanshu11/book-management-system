@@ -52,8 +52,10 @@
                         <option value="history">History</option>
                     </select>
                 </div>
-
-                <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Add Book</button>
+                <div class="flex justify-center items-center gap-5">
+                    <button type="reset" class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Reset</button>
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Add Book</button>
+                </div>
             </div>
         </form>
 
@@ -101,13 +103,18 @@
                           <th class="px-4 text-lg py-2 w-1/5">Actions</th>
                       </tr>
                   </thead>
+                  <!-- Loader Element -->
+                  
                   <tbody class="border-separate">
                       <!-- Dynamic Table Data Will Be Inserted Here -->
-                  </tbody>
-              </table>
+                    </tbody>
+                </table>
+                <!-- Loader placed Here... -->
+                <div id="loader" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50 gap-4 hidden">
+                    <div class="animate-spin rounded-full border-t-4 border-b-4 border-blue-500 w-16 h-16"></div>
+                    <h1 class="text-3xl font-bold">Fetching Books...</h1>
+                </div>
           </div>
-          
-          
         </div>
     </div>
 

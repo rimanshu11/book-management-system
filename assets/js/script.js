@@ -5,11 +5,23 @@ class Book {
     this.editIndex = null;
     this.form.addEventListener('submit', this.handleFormSubmit.bind(this));
 
+    // Add the reset button functionality
+    const resetBtn = document.querySelector('[type="reset"]');
+    resetBtn.addEventListener('click', this.handleFormReset.bind(this));
+
     const genreFilter = document.getElementById('genreFilter');
     genreFilter.addEventListener('change', this.filterGenre.bind(this));
 
     const sortBtn = document.getElementById('sortBtn');
     sortBtn.addEventListener('change', this.sortBook.bind(this)); // Correctly adding the event listener
+  }
+
+  // Method to handle form reset
+  handleFormReset() {
+    const addBtn = document.querySelector('[type="submit"]');
+    addBtn.textContent = 'Add Book'; 
+    this.editIndex = null;
+    this.form.reset();
   }
 
   // Method to handle form on submit
@@ -23,33 +35,40 @@ class Book {
     const genre = document.getElementById('genre').value.trim();
 
     if (!title || !author || !isbn || !publicationDate || !genre) {
-      alert("All fields are Required!");
-      return;
+        alert("All fields are Required!");
+        return;
     } else if (isNaN(isbn) || isbn.length !== 13) {
-      alert("ISBN must be 13 digits");
-      return;
+        alert("ISBN must be 13 digits");
+        return;
     }
 
     const bookAge = this.calculateBookAge(publicationDate);
     if (this.editIndex !== null) {
-      this.bookList[this.editIndex] = {
-        title,
-        author,
-        isbn,
-        publicationDate,
-        genre,
-        bookAge,
-      };
-      this.editIndex = null;
-      alert('Book Edited Successfully!');
-      this.form.reset();
+        // Update only the editable fields: title, author, publicationDate, genre
+        this.bookList[this.editIndex] = {
+            ...this.bookList[this.editIndex], // Keep the other fields (ISBN, bookAge) intact
+            title,
+            author,
+            publicationDate,
+            genre,
+            bookAge, // Recalculate book age (optional if you want to recalculate)
+        };
+        this.editIndex = null;
+        this.handleFormReset();
+        alert('Book Edited Successfully!');
+        
     } else {
-      this.bookList.push({ title, author, isbn, publicationDate, genre, bookAge });
-      this.form.reset();
-      alert('Book Added Successfully');
+        this.bookList.push({ title, author, isbn, publicationDate, genre, bookAge });
+        this.form.reset();
+        alert('Book Added Successfully');
     }
+
+    // Enable the ISBN field again after submitting the form (for new books)
+    document.getElementById('isbn').disabled = false;
+
     this.updateTableData(this.bookList);
   }
+
 
   // Method to calculate the age of the book
   calculateBookAge(publicationDate) {
@@ -155,10 +174,17 @@ class Book {
     document.getElementById('title').value = book.title;
     document.getElementById('author').value = book.author;
     document.getElementById('isbn').value = book.isbn;
+    document.getElementById('isbn').disabled = book.isbn;
     document.getElementById('publicationDate').value = book.publicationDate;
     document.getElementById('genre').value = book.genre;
     this.editIndex = index;
+    const addBtn = document.querySelector('[type="submit"]');
+    addBtn.textContent = 'Update Book'; 
+    
+    document.getElementById('title').focus();
   }
+
+
 
   // Method to filter books by genre
   filterGenre(event) {
@@ -183,18 +209,17 @@ class Book {
   }
 
   discountCalculation(price, discountedPrice) {
-  if (price === discountedPrice) {
-    return `<span class="text-green-500 font-bold">${price.toFixed()} /-</span>`;
-  } else {
-    const percentage = (discountedPrice / price) * 100;
-    const discountPercentage = (100 - percentage).toFixed();
-    
-    return `
-      <span class="line-through text-red-500 font-semibold">${price.toFixed()} rs/-</span>
-      <span class="text-green-600 font-bold">(${discountPercentage}% Off)</span><br>
-      <span class=" text-blue-600  font-semibold">${discountedPrice.toFixed()} rs/-</span>
-    `;
+    if (price === discountedPrice) {
+      return `<span class="text-green-500 font-bold">${price.toFixed()} /-</span>`;
+    } else {
+      const percentage = (discountedPrice / price) * 100;
+      const discountPercentage = (100 - percentage).toFixed();
+      
+      return `
+        <span class="line-through text-red-500 font-semibold">${price.toFixed()} rs/-</span>
+        <span class="text-green-600 font-bold">(${discountPercentage}% Off)</span><br>
+        <span class=" text-blue-600  font-semibold">${discountedPrice.toFixed()} rs/-</span>
+      `;
+    }
   }
-}
-
 }
