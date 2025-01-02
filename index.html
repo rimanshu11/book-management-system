@@ -39,17 +39,22 @@
                     <label for="genre" class="block text-sm font-medium">Genre</label>
                     <select name="genre" id="genre" class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="" disabled selected>Select Genre</option>
-                        <option value="Fiction">Fiction</option>
-                        <option value="Non-Fiction">Non-Fiction</option>
-                        <option value="Mystery">Mystery</option>
-                        <option value="Fantasy">Fantasy</option>
-                        <option value="Science-Fiction">Science Fiction</option>
-                        <option value="Biography">Biography</option>
-                        <option value="History">History</option>
+                        <option value="fiction">Fiction</option>
+                        <option value="non fiction">Non-Fiction</option>
+                        <option value="mystery">Mystery</option>
+                        <option value="fantasy">Fantasy</option>
+                        <option value="science fiction">Science Fiction</option>
+                        <option value="biography">Biography</option>
+                        <option value="novel">Novel</option>
+                        <option value="travel">Travel</option>
+                        <option value="reference">Reference</option>
+                        <option value="history">History</option>
                     </select>
                 </div>
-
-                <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Add Book</button>
+                <div class="flex justify-center items-center gap-5">
+                    <button type="reset" class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Reset</button>
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Add Book</button>
+                </div>
             </div>
         </form>
 
@@ -57,15 +62,15 @@
         <div class="mt-8">
             <div id="searchBox" class="mb-4 flex flex-col items-center sm:flex-row sm:items-center sm:justify-center gap-4 sm:gap-4">
                 <input type="text" id="search" placeholder="Search book by Title" class="w-full sm:w-2/3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <button id="searchBtn" onclick="searchBook(event)" class="w-full sm:w-auto bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Search</button>
+                <button id="searchBtn" onclick="fetchBook.searchBook(event)" class="w-full sm:w-auto bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Search</button>
             </div>
             <!-- sort by title -->
             <div class="mb-4 flex flex-col items-center justify-end sm:flex-row sm:items-center sm:justify-end gap-4 sm:gap-4">
-              <select id="sortBtn" name="sort" onchange="sortBook(event)" class="w-auto text-md font-semibold bg-orange-600 p-3  text-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 mt-1">
-                  <option value="">Sort by Title</option>
-                  <option value="asc">Ascending</option>
-                  <option value="dsc">Descending</option>
-              </select>
+                <select id="sortBtn" name="sort" class="w-auto text-md font-semibold bg-orange-600 p-3 text-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 mt-1">
+                    <option value="default">Sort by Title</option>
+                    <option value="asc">Ascending</option>
+                    <option value="dsc">Descending</option>
+                </select>                
             </div>
 <!-- table  -->
             <div class="mt-8 overflow-x-auto">
@@ -78,7 +83,7 @@
                           <th class="px-4 text-lg py-2 w-1/5">Publication Date</th>
                           <th class="px-4 py-2 w-1/5">
                               <label for="genre" class=" text-lg block text-sm font-medium text-white">Genre</label>
-                              <select id="genreFilter" name="genre" onchange="filterGenre()" class="w-full text-sm text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 mt-1">
+                              <select id="genreFilter" name="genre" class="w-full text-sm text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 mt-1">
                                   <option value="">Select Genre</option>
                                   <option value="fiction">Fiction</option>
                                   <option value="non fiction">Non-Fiction</option>
@@ -87,21 +92,28 @@
                                   <option value="science fiction">Science Fiction</option>
                                   <option value="biography">Biography</option>
                                   <option value="novel">Novel</option>
+                                  <option value="travel">Travel</option>
                                   <option value="reference">Reference</option>
                                   <option value="history">History</option>
                               </select>
                           </th>
+                          <th class="px-4 text-lg py-2 w-1/5">Book Price</th>
                           <th class="px-4 text-lg py-2 w-1/5">Book Age</th>
                           <th class="px-4 text-lg py-2 w-1/5">Actions</th>
                       </tr>
                   </thead>
+                  <!-- Loader Element -->
+                  
                   <tbody class="border-separate">
                       <!-- Dynamic Table Data Will Be Inserted Here -->
-                  </tbody>
-              </table>
+                    </tbody>
+                </table>
+                <!-- Loader placed Here... -->
+                <div id="loader" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50 gap-4 hidden">
+                    <div class="animate-spin rounded-full border-t-4 border-b-4 border-blue-500 w-16 h-16"></div>
+                    <h1 class="text-3xl font-bold">Fetching Books...</h1>
+                </div>
           </div>
-          
-          
         </div>
     </div>
 
