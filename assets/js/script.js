@@ -209,9 +209,24 @@ class Book {
   }
 
   discountCalculation(price, discountedPrice) {
+    console.log(price);
+    console.log(discountedPrice);
     if( price == undefined && discountedPrice == undefined){
       price=0;
       discountedPrice=0;
+      if (price === discountedPrice) {
+        return `<span class="text-green-500 font-bold">${price.toFixed()} /-</span>`;
+      } else {
+        const percentage = (discountedPrice / price) * 100;
+        const discountPercentage = (100 - percentage).toFixed();
+        
+        return `
+          <span class="line-through text-red-500 font-semibold">${price.toFixed()} rs/-</span>
+          <span class="text-green-600 font-bold">(${discountPercentage}% Off)</span><br>
+          <span class=" text-blue-600  font-semibold">${discountedPrice.toFixed()} rs/-</span>
+        `;
+      }
+    }else {
       if (price === discountedPrice) {
         return `<span class="text-green-500 font-bold">${price.toFixed()} /-</span>`;
       } else {
