@@ -13,7 +13,7 @@ class Book {
     genreFilter.addEventListener('change', this.filterGenre.bind(this));
 
     const sortBtn = document.getElementById('sortBtn');
-    sortBtn.addEventListener('change', this.sortBook.bind(this)); // Correctly adding the event listener
+    sortBtn.addEventListener('change', this.sortBook.bind(this)); 
   }
 
   // Method to handle form reset
@@ -163,7 +163,6 @@ class Book {
   // Method to delete specific book from the table
   deleteBook(index) {
     this.bookList.splice(index, 1);
-    console.log('After Delete:', this.bookList);
     this.updateTableData(this.bookList);
     alert('Book Deleted Successfully');
   }
@@ -209,8 +208,6 @@ class Book {
   }
 
   discountCalculation(price, discountedPrice) {
-    console.log(price);
-    console.log(discountedPrice);
     if( price == undefined && discountedPrice == undefined){
       price=0;
       discountedPrice=0;

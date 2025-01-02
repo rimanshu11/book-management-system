@@ -17,14 +17,13 @@ class FetchBook extends Book {
 
   // Method to fetch books from the API
   async fetchBooks() {
-    this.showLoader();  // Show the loader before starting the fetch process
+    this.showLoader();
     try {
       const response = await fetch(`${this.apiUrl}genre:science+fiction+history+fantasy+biography+mystery`);
       if (response.ok) {
         const data = await response.json();        
         const transformedData = this.transformData(data.items);
         this.bookList = transformedData;
-        console.log(this.bookList);
         
         this.updateTableData(this.bookList);
       } else {
@@ -33,6 +32,7 @@ class FetchBook extends Book {
       }
     } catch (error) {
       console.log('Error:', error);
+      alert("Something went wrong!")
     } finally {
       this.hideLoader(); 
     }
@@ -59,6 +59,7 @@ class FetchBook extends Book {
             alert('No book found');
             this.updateTableData(this.bookList);
           } else {
+            this.bookList = transformedData;
             this.updateTableData(transformedData);
           }
         } else {
@@ -67,6 +68,7 @@ class FetchBook extends Book {
         }
       } catch (error) {
         console.log('Error fetching books:', error);
+        alert("Issues while search Book, Try Again!")
       } finally {
         this.hideLoader();
       }
