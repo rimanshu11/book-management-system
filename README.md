@@ -130,4 +130,4 @@ This project uses the **Google Books API**, which is a service provided by Googl
 
 # Technology used
 
-Frontend- HTML, CSS, Javascript
+Frontend- HTML, TailwindCSS, Javascript
