@@ -100,19 +100,17 @@ git clone 'https://github.com/rimanshu11/book-management-system.git'
 ```
 2) Keep the folder structure as this.
 
-        book-management-system/
-        ├── assets/
-        │   ├── js/s
-        │   │   └── script.js
-        │   │   └── fetchBook.js
-        ├── diagram/
-        │   ├── 3-tier-architecture.png/
-        │   ├── client-server-architecture.jpeg/
-        │   └── er-diagram.png/
-        ├── index.html
-        └── README.md
-
-
+ book-management-system/
+    ├── assets/
+		├── css/
+    │   │   └── style.css
+    │   ├── js/
+    │   │   └── script.js
+    ├── diagram/
+    │   ├── 3-tier-architecture/
+    │   ├── client-server-architecture/
+    │   └── er-diagram/
+    └── README.md
 
 
 3) Start the Live server
