@@ -1,94 +1,79 @@
 class FetchBook extends Book {
   constructor() {
-    super(); 
-    this.apiUrl = `https://www.googleapis.com/books/v1/volumes?q=`;
+    super();
+    this.apiUrl = 'https://www.googleapis.com/books/v1/volumes?q=';
+    this.bookList = [];
     this.fetchBooks();
   }
 
-  // Method to show the loader
-  showLoader() {
-    document.getElementById('loader').classList.remove('hidden');
+  // method to show and hide the loader
+  toggleLoader(isLoading) {
+    const loaderElement = document.getElementById('loader');
+    loaderElement.classList.toggle('hidden', !isLoading);
   }
 
-  // Method to hide the loader
-  hideLoader() {
-    document.getElementById('loader').classList.add('hidden');
-  }
-
-  // Method to fetch books from the API
-  async fetchBooks() {
-    this.showLoader();  // Show the loader before starting the fetch process
+  // method to API fetch function
+  async fetchData(query) {
+    this.toggleLoader(true);
     try {
-      const response = await fetch(`${this.apiUrl}genre:science+fiction+history+fantasy+biography+mystery`);
-      if (response.ok) {
-        const data = await response.json();        
-        const transformedData = this.transformData(data.items);
-        this.bookList = transformedData;
-        console.log(this.bookList);
-        
-        this.updateTableData(this.bookList);
-      } else {
-        alert("Network error");
+      const response = await fetch(`${this.apiUrl}${query}`);
+      if (!response.ok) {
         throw new Error('Network Error');
       }
+      const data = await response.json();
+      return data.items || [];
     } catch (error) {
-      console.log('Error:', error);
+      console.error('Error:', error);
+      alert("Something went wrong, Try Again!");
+      return [];
     } finally {
-      this.hideLoader(); 
+      this.toggleLoader(false);
     }
   }
 
-  // Method to search books based on title
+  // method to fetch books
+  async fetchBooks(query = 'genre:science+fiction+history+fantasy+biography+mystery') {
+    const booksData = await this.fetchData(query);
+    this.handleFetchedData(booksData);
+  }
+
+  // method to handle fetched data
+  handleFetchedData(apiData) {
+    if (apiData.length) {
+      const transformedData = this.transformData(apiData);
+      this.bookList = transformedData;
+      this.updateTableData(this.bookList);
+    } else {
+      this.updateTableData(this.bookList);
+    }
+  }
+
+  // Method to search books based on the search value
   async searchBook(e) {
     e.preventDefault();
     const searchValue = document.getElementById('search').value.trim().toLowerCase();
+
     if (searchValue === '') {
       this.updateTableData(this.bookList);
     } else {
-      this.showLoader();
-      try {
-        const response = await fetch(`${this.apiUrl}${searchValue}`);
-        const data = await response.json();
-        if (response.ok && data.items) {
-          const filteredBooks = data.items.filter((data) => {
-            const title = data.volumeInfo.title.toLowerCase();
-            return title.includes(searchValue);
-          });
-          const transformedData = this.transformData(filteredBooks);
-          if (transformedData.length < 1) {
-            alert('No book found');
-            this.updateTableData(this.bookList);
-          } else {
-            this.updateTableData(transformedData);
-          }
-        } else {
-          alert('No books found for the search term');
-          this.updateTableData(this.bookList);
-        }
-      } catch (error) {
-        console.log('Error fetching books:', error);
-      } finally {
-        this.hideLoader();
-      }
+      // const query = searchValue;
+      const booksData = await this.fetchData(searchValue);
+      this.handleFetchedData(booksData);
+    }
+  }
+  // method to clear the search result
+  clearSearch() {
+    const searchField = document.getElementById('search').value.trim();
+    if(searchField){
+      document.getElementById('search').value = ''
+      this.fetchBooks();
     }
   }
 
-  // Method to transform API data into a custom structure
+  // method to Transform API data into a custom structure
   transformData(apiData) {
     return apiData
-      .filter((data) => {
-        const industryIdentifier = data.volumeInfo.industryIdentifiers?.[0]?.identifier;
-        return (
-          data.saleInfo?.listPrice?.amount &&
-          data.saleInfo?.retailPrice?.amount &&
-          data.volumeInfo.title &&
-          data.volumeInfo.authors &&
-          data.volumeInfo.categories &&
-          industryIdentifier &&
-          data.volumeInfo.publishedDate &&
-          !isNaN(industryIdentifier)
-        );
-      })
+      .filter((data) => this.isValidBookData(data))
       .map((data) => ({
         discountPrice: data.saleInfo.retailPrice.amount,
         price: data.saleInfo.listPrice.amount,
@@ -100,6 +85,22 @@ class FetchBook extends Book {
         bookAge: this.calculateBookAge(data.volumeInfo.publishedDate),
       }));
   }
+
+  // method to validate book data
+  isValidBookData(data) {
+    const industryIdentifier = data.volumeInfo.industryIdentifiers?.[0]?.identifier;
+    return (
+      data.saleInfo?.listPrice?.amount &&
+      data.saleInfo?.retailPrice?.amount &&
+      data.volumeInfo.title &&
+      data.volumeInfo.authors &&
+      data.volumeInfo.categories &&
+      industryIdentifier &&
+      data.volumeInfo.publishedDate &&
+      !isNaN(industryIdentifier)
+    );
+  }
 }
 
 const fetchBook = new FetchBook();
+document.getElementById('searchBtn').addEventListener('click', (e) => fetchBook.searchBook(e));
