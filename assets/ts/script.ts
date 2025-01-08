@@ -50,6 +50,21 @@ class Book {
         const errorFields = ['title-error', 'author-error', 'isbn-error', 'publicationDate-error', 'price-error', 'discountPrice-error', 'genre-error'];
         errorFields.forEach(field => this.toggleError(field));
     }
+    // Method to show modal with a message
+    showModal(message: string): void {
+        const modal = document.getElementById('modal') as HTMLElement;
+        const modalMessage = document.getElementById('modalMessage') as HTMLElement;
+        const closeModalBtn = document.getElementById('closeModalBtn') as HTMLButtonElement;
+        
+        // Set the message and display the modal
+        modalMessage.textContent = message;
+        modal.classList.remove('hidden');
+        
+        // Close modal when the button is clicked
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+    }
 
     // Method to handle form submission
     handleFormSubmit(event: Event): void {
@@ -64,15 +79,16 @@ class Book {
                 this.bookList[this.editIndex] = { ...this.bookList[this.editIndex], title, author, publicationDate, price, discountPrice, genre, bookAge };
                 this.editIndex = null;
                 this.handleFormReset();
-                alert('Book Edited Successfully!');
+                this.showModal('Book Edited Successfully!');
             } else {
                 this.bookList.push({ title, author, isbn, publicationDate, price, discountPrice, genre, bookAge });
                 this.handleFormReset();
-                alert('Book Added Successfully');
+                this.showModal('Book Added Successfully');
             }
         }
         this.updateTableData(this.bookList);
     }
+
 
     // Get form data and return as an object
     getFormData(): formData {
@@ -145,6 +161,7 @@ class Book {
             errorElement!.classList.add('hidden');
         }
     }
+    
 
     // Method to calculate the age of the book
     calculateBookAge(publicationDate: string): string {
@@ -198,33 +215,79 @@ class Book {
             </tr>
         `;
     }
+    
+    // Method to show confirmation modal before deletion
+    showDeleteConfirmationModal(index: number): void {
+        const confirmDeleteModal = document.getElementById('confirmDeleteModal') as HTMLElement;
+        const confirmDeleteMessage = document.getElementById('confirmDeleteMessage') as HTMLElement;
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn') as HTMLButtonElement;
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn') as HTMLButtonElement;
+        confirmDeleteMessage.textContent = `Are you sure you want to delete the book titled "${this.bookList[index].title}"?`;
+
+        confirmDeleteModal.classList.remove('hidden');
+        confirmDeleteBtn.addEventListener('click', () => {
+            this.deleteBookConfirmed(index);
+            confirmDeleteModal.classList.add('hidden');
+        });
+
+        cancelDeleteBtn.addEventListener('click', () => {
+            confirmDeleteModal.classList.add('hidden');
+        });
+    }
+
+    // Method to delete the book after confirmation
+    deleteBookConfirmed(index: number): void {
+        this.bookList.splice(index, 1);
+        this.updateTableData(this.bookList);
+        this.showModal('Book Deleted Successfully');
+    }
     // Method to delete specific book from the table
     deleteBook(index: number): void {
-        if (confirm('Want to Delete?')) {
-            this.bookList.splice(index, 1);
-            this.updateTableData(this.bookList);
-            alert('Book Deleted Successfully');
-        }
-}
+        this.showDeleteConfirmationModal(index);
+    }
+
 
     // Method to edit a specific book
     editBook(index: number): void {
         const book = this.bookList[index];
         this.cachedFormData = { ...book };
-        
-        (document.getElementById('title') as HTMLInputElement).value = book.title;
-        (document.getElementById('author') as HTMLInputElement).value = book.author;
-        (document.getElementById('isbn') as HTMLInputElement).value = book.isbn;
-        (document.getElementById('isbn') as HTMLInputElement).disabled = true;
-        (document.getElementById('publicationDate') as HTMLInputElement).value = book.publicationDate;
-        (document.getElementById('listPrice') as HTMLInputElement).value = book.price.toString();
-        (document.getElementById('discountPrice') as HTMLInputElement).value = book.discountPrice.toString();
-        (document.getElementById('genre') as HTMLInputElement).value = book.genre;
-        (document.getElementById('title') as HTMLInputElement).focus();
-
+        this.setForm(book);
         this.editIndex = index;
         this.updateSubmitButton('Update Book');
     }
+    // Method to set form data
+    setForm(data: formData): void {
+        const formElements = {
+            title: document.getElementById('title') as HTMLInputElement,
+            author: document.getElementById('author') as HTMLInputElement,
+            isbn: document.getElementById('isbn') as HTMLInputElement,
+            publicationDate: document.getElementById('publicationDate') as HTMLInputElement,
+            listPrice: document.getElementById('listPrice') as HTMLInputElement,
+            discountPrice: document.getElementById('discountPrice') as HTMLInputElement,
+            genre: document.getElementById('genre') as HTMLSelectElement
+        };
+        formElements.title.value = data.title;
+        formElements.author.value = data.author;
+        formElements.isbn.value = data.isbn;
+        formElements.isbn.disabled = true; 
+        formElements.publicationDate.value = data.publicationDate;
+        formElements.listPrice.value = data.price.toString();
+        formElements.discountPrice.value = data.discountPrice.toString();
+
+        const genreSelect = formElements.genre;
+        const genreOptions = Array.from(genreSelect.options).map(option => option.value.toLowerCase());
+        const bookGenre = data.genre.trim().toLowerCase();
+        if (!genreOptions.includes(bookGenre)) {
+            const newOption = document.createElement('option');
+            newOption.value = data.genre;
+            newOption.textContent = data.genre;
+            genreSelect.appendChild(newOption);
+        }
+        genreSelect.value = data.genre;
+        formElements.title.focus();
+    }
+
+
 
 
     // Method to filter books by genre

@@ -144,14 +144,35 @@
                       <!-- Dynamic Table Data Will Be Inserted Here -->
                     </tbody>
                 </table>
-                <div id="pagination" class="pagination-container flex justify-center items-center w-full text-base gap-4 font-semibold my-5">
-                    <!-- Pagination buttons will be dynamically inserted here -->
-                  </div>
-                <!-- Loader placed Here... -->
-                <div id="loader" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50 gap-4 hidden">
-                    <div class="animate-spin rounded-full border-t-4 border-b-4 border-blue-500 w-16 h-16"></div>
-                    <h1 class="text-3xl font-bold">Fetching Books...</h1>
+            <div id="pagination" class="pagination-container flex justify-center items-center w-full text-base gap-4 font-semibold my-5">
+                <!-- Pagination buttons will be dynamically inserted here -->
+            </div>
+            <!-- Loader placed Here... -->
+            <div id="loader" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50 gap-4 hidden">
+                <div class="animate-spin rounded-full border-t-4 border-b-4 border-blue-500 w-16 h-16"></div>
+                <h1 class="text-3xl font-bold">Fetching Books...</h1>
+            </div>
+            <!-- Pop-up component -->
+            <div id="modal" class="hidden fixed top-0 left-0 w-full h-full transition duration-500 transform opacity-100 bg-gray-500 bg-opacity-80 flex justify-center items-center">
+                <div class="bg-white p-5 rounded-lg shadow-md max-w-xs flex flex-col gap-4 justify-center items-center">
+                    <p id="modalMessage" class="text-lg font-medium text-green-700"></p>
+                    <button id="closeModalBtn" class="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+                        Close
+                    </button>
                 </div>
+            </div>
+            <!-- Confirmation component -->
+            <div id="confirmDeleteModal" class="hidden fixed top-0 left-0 w-full h-full transition duration-500 transform opacity-100 bg-gray-500 bg-opacity-80 flex justify-center items-center">
+                <div class="bg-white p-5 rounded-lg shadow-md max-w-xs text-center">
+                    <p id="confirmDeleteMessage" class="text-red-500 font-medium text-base"></p>
+                    <button id="confirmDeleteBtn" class="mt-4 p-2 bg-red-500 text-white font-medium rounded hover:bg-red-700">
+                        Yes, Delete
+                    </button>
+                    <button id="cancelDeleteBtn" class="mt-4 p-2 bg-gray-500 text-white font-medium rounded hover:bg-gray-700">
+                        No, Cancel
+                    </button>
+                </div>
+            </div>
           </div>
         </div>
     </div>

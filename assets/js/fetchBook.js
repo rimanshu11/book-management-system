@@ -33,7 +33,7 @@ class FetchBook extends Book {
         }
         catch (error) {
             console.error('Error:', error);
-            alert("Something went wrong, Try Again!");
+            this.showModal("Something went wrong, Try Again!");
             return [];
         }
         finally {
@@ -81,7 +81,6 @@ class FetchBook extends Book {
             this.fetchBooks();
         }
         else {
-            alert("Clicked again");
             const booksData = await this.fetchData(searchValue, this.booksPerPage, 0);
             this.handleFetchedData(booksData);
             this.totalBooks = 0;
@@ -98,12 +97,10 @@ class FetchBook extends Book {
     }
     // Method to update pagination buttons
     updatePagination() {
-        console.log("length", this.bookList.length);
         this.totalPages = Math.ceil(this.totalBooks / this.booksPerPage);
         if (this.totalPages === 0) {
             this.totalPages = 1;
         }
-        console.log("from updatepagination", this.totalBooks, this.booksPerPage);
         const paginationContainer = document.getElementById('pagination');
         paginationContainer.innerHTML = '';
         const prevButton = document.createElement('button');

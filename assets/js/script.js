@@ -37,6 +37,19 @@ class Book {
         const errorFields = ['title-error', 'author-error', 'isbn-error', 'publicationDate-error', 'price-error', 'discountPrice-error', 'genre-error'];
         errorFields.forEach(field => this.toggleError(field));
     }
+    // Method to show modal with a message
+    showModal(message) {
+        const modal = document.getElementById('modal');
+        const modalMessage = document.getElementById('modalMessage');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        // Set the message and display the modal
+        modalMessage.textContent = message;
+        modal.classList.remove('hidden');
+        // Close modal when the button is clicked
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+    }
     // Method to handle form submission
     handleFormSubmit(event) {
         event.preventDefault();
@@ -50,12 +63,12 @@ class Book {
                 this.bookList[this.editIndex] = { ...this.bookList[this.editIndex], title, author, publicationDate, price, discountPrice, genre, bookAge };
                 this.editIndex = null;
                 this.handleFormReset();
-                alert('Book Edited Successfully!');
+                this.showModal('Book Edited Successfully!');
             }
             else {
                 this.bookList.push({ title, author, isbn, publicationDate, price, discountPrice, genre, bookAge });
                 this.handleFormReset();
-                alert('Book Added Successfully');
+                this.showModal('Book Added Successfully');
             }
         }
         this.updateTableData(this.bookList);
@@ -175,29 +188,69 @@ class Book {
             </tr>
         `;
     }
+    // Method to show confirmation modal before deletion
+    showDeleteConfirmationModal(index) {
+        const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+        const confirmDeleteMessage = document.getElementById('confirmDeleteMessage');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        confirmDeleteMessage.textContent = `Are you sure you want to delete the book titled "${this.bookList[index].title}"?`;
+        confirmDeleteModal.classList.remove('hidden');
+        confirmDeleteBtn.addEventListener('click', () => {
+            this.deleteBookConfirmed(index);
+            confirmDeleteModal.classList.add('hidden');
+        });
+        cancelDeleteBtn.addEventListener('click', () => {
+            confirmDeleteModal.classList.add('hidden');
+        });
+    }
+    // Method to delete the book after confirmation
+    deleteBookConfirmed(index) {
+        this.bookList.splice(index, 1);
+        this.updateTableData(this.bookList);
+        this.showModal('Book Deleted Successfully');
+    }
     // Method to delete specific book from the table
     deleteBook(index) {
-        if (confirm('Want to Delete?')) {
-            this.bookList.splice(index, 1);
-            this.updateTableData(this.bookList);
-            alert('Book Deleted Successfully');
-        }
+        this.showDeleteConfirmationModal(index);
     }
     // Method to edit a specific book
     editBook(index) {
         const book = this.bookList[index];
         this.cachedFormData = { ...book };
-        document.getElementById('title').value = book.title;
-        document.getElementById('author').value = book.author;
-        document.getElementById('isbn').value = book.isbn;
-        document.getElementById('isbn').disabled = true;
-        document.getElementById('publicationDate').value = book.publicationDate;
-        document.getElementById('listPrice').value = book.price.toString();
-        document.getElementById('discountPrice').value = book.discountPrice.toString();
-        document.getElementById('genre').value = book.genre;
-        document.getElementById('title').focus();
+        this.setForm(book);
         this.editIndex = index;
         this.updateSubmitButton('Update Book');
+    }
+    // Method to set form data
+    setForm(data) {
+        const formElements = {
+            title: document.getElementById('title'),
+            author: document.getElementById('author'),
+            isbn: document.getElementById('isbn'),
+            publicationDate: document.getElementById('publicationDate'),
+            listPrice: document.getElementById('listPrice'),
+            discountPrice: document.getElementById('discountPrice'),
+            genre: document.getElementById('genre')
+        };
+        formElements.title.value = data.title;
+        formElements.author.value = data.author;
+        formElements.isbn.value = data.isbn;
+        formElements.isbn.disabled = true;
+        formElements.publicationDate.value = data.publicationDate;
+        formElements.listPrice.value = data.price.toString();
+        formElements.discountPrice.value = data.discountPrice.toString();
+        const genreSelect = formElements.genre;
+        const genreOptions = Array.from(genreSelect.options).map(option => option.value.toLowerCase());
+        const bookGenre = data.genre.trim().toLowerCase();
+        if (!genreOptions.includes(bookGenre)) {
+            const newOption = document.createElement('option');
+            newOption.value = data.genre;
+            newOption.textContent = data.genre;
+            genreSelect.appendChild(newOption);
+        }
+        genreSelect.value = data.genre;
+        formElements.title.focus();
     }
     // Method to filter books by genre
     filterGenre(event) {
