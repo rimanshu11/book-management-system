@@ -99,6 +99,7 @@
                     <button id="clearSearchBtn" onclick="fetchBook.clearSearch()" class="w-full sm:w-auto bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">Clear Search</button>
                 </div>
             </div>
+            
             <!-- sort by title -->
             <div class="right-8 mb-4 flex flex-col items-center justify-end sm:flex-row sm:items-center sm:justify-end gap-4 sm:gap-4">
                 <select id="sortBtn" name="sort" class="w-auto text-md font-semibold bg-orange-600 p-3 text-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 mt-1">
@@ -138,13 +139,14 @@
                       </tr>
                   </thead>
                   <!-- Loader Element -->
-                  
+                  <p id="total-iteam" class="text-base font-semibold ml-5"></p>
                   <tbody class="border-separate">
                       <!-- Dynamic Table Data Will Be Inserted Here -->
                     </tbody>
                 </table>
-                <div id="pagination" class="flex justify-center items-center gap-4 mt-6">
-                </div>
+                <div id="pagination" class="pagination-container flex justify-center items-center w-full text-base gap-4 font-semibold my-5">
+                    <!-- Pagination buttons will be dynamically inserted here -->
+                  </div>
                 <!-- Loader placed Here... -->
                 <div id="loader" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50 gap-4 hidden">
                     <div class="animate-spin rounded-full border-t-4 border-b-4 border-blue-500 w-16 h-16"></div>

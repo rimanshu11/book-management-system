@@ -60,7 +60,7 @@ class Book {
         }
         this.updateTableData(this.bookList);
     }
-    // Get form data and return as an object (only when needed)
+    // Get form data and return as an object
     getFormData() {
         return {
             title: document.getElementById('title').value.trim(),
@@ -117,7 +117,7 @@ class Book {
         }
         return isValid;
     }
-    // Show or hide error messages based on the presence of the message argument
+    // method to show or hide error messages
     toggleError(fieldId, message = '') {
         const errorElement = document.getElementById(fieldId);
         if (message) {

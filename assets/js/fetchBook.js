@@ -2,6 +2,10 @@
 class FetchBook extends Book {
     apiUrl;
     transformedData = [];
+    currentPage = 1;
+    totalPages = 1;
+    booksPerPage = 20;
+    totalBooks = 0;
     constructor() {
         super();
         this.apiUrl = 'https://www.googleapis.com/books/v1/volumes?q=';
@@ -14,14 +18,17 @@ class FetchBook extends Book {
         loaderElement?.classList.toggle('hidden', !isLoading);
     }
     // Method to fetch data from API
-    async fetchData(query, max = 10) {
+    async fetchData(query, max = 10, startIndex = 0) {
         this.toggleLoader(true);
         try {
-            const response = await fetch(`${this.apiUrl}${query}&startIndex=0&maxResults=${max}`);
+            const response = await fetch(`${this.apiUrl}${query}&startIndex=${startIndex}&maxResults=${max}`);
             if (!response.ok) {
                 throw new Error('Network Error');
             }
             const data = await response.json();
+            if (this.totalBooks === 0) {
+                this.totalBooks = data.totalItems || 100;
+            }
             return data.items || [];
         }
         catch (error) {
@@ -35,8 +42,9 @@ class FetchBook extends Book {
     }
     // Method to fetch books
     async fetchBooks(query = 'genre:science+fiction+history+fantasy+biography+mystery') {
-        const booksData = await this.fetchData(query, 40);
+        const booksData = await this.fetchData(query, this.booksPerPage, (this.currentPage - 1) * this.booksPerPage);
         this.handleFetchedData(booksData);
+        this.updatePagination();
     }
     // Method to handle the fetched data
     handleFetchedData(apiData) {
@@ -47,26 +55,6 @@ class FetchBook extends Book {
         }
         else {
             this.updateTableData(this.bookList);
-        }
-    }
-    // Method to search books based on the search value
-    async searchBook(e) {
-        e.preventDefault();
-        const searchValue = document.getElementById('search').value.trim().toLowerCase();
-        if (searchValue === '') {
-            this.updateTableData(this.bookList);
-        }
-        else {
-            const booksData = await this.fetchData(searchValue);
-            this.handleFetchedData(booksData);
-        }
-    }
-    // Method to clear the search result
-    clearSearch() {
-        const searchField = document.getElementById('search').value.trim();
-        if (searchField) {
-            document.getElementById('search').value = '';
-            this.fetchBooks();
         }
     }
     // Method to transform API data into a custom structure
@@ -84,16 +72,73 @@ class FetchBook extends Book {
             bookAge: this.calculateBookAge(data.volumeInfo?.publishedDate),
         }));
     }
+    // Method to search books based on the search value
+    async searchBook(e) {
+        e.preventDefault();
+        const searchValue = document.getElementById('search').value.trim().toLowerCase();
+        this.currentPage = 1;
+        if (searchValue === '') {
+            this.fetchBooks();
+        }
+        else {
+            alert("Clicked again");
+            const booksData = await this.fetchData(searchValue, this.booksPerPage, 0);
+            this.handleFetchedData(booksData);
+            this.totalBooks = 0;
+            this.updatePagination();
+        }
+    }
+    // Method to clear the search result
+    clearSearch() {
+        const searchField = document.getElementById('search').value.trim();
+        if (searchField) {
+            document.getElementById('search').value = '';
+            this.fetchBooks();
+        }
+    }
+    // Method to update pagination buttons
+    updatePagination() {
+        console.log("length", this.bookList.length);
+        this.totalPages = Math.ceil(this.totalBooks / this.booksPerPage);
+        if (this.totalPages === 0) {
+            this.totalPages = 1;
+        }
+        console.log("from updatepagination", this.totalBooks, this.booksPerPage);
+        const paginationContainer = document.getElementById('pagination');
+        paginationContainer.innerHTML = '';
+        const prevButton = document.createElement('button');
+        prevButton.innerText = 'Previous';
+        prevButton.setAttribute("class", "bg-indigo-700 text-white py-2 px-4 hover:bg-indigo-700 rounded-xl");
+        prevButton.disabled = this.currentPage === 1;
+        prevButton.addEventListener('click', () => this.changePage(this.currentPage - 1));
+        const pageNumbers = document.createElement('span');
+        pageNumbers.innerText = `Page ${this.currentPage} of ${this.totalPages}`;
+        const nextButton = document.createElement('button');
+        nextButton.innerText = 'Next';
+        nextButton.setAttribute("class", "bg-indigo-700 text-white py-2 px-4 hover:bg-indigo-700 rounded-xl");
+        nextButton.disabled = this.currentPage === this.totalPages;
+        nextButton.addEventListener('click', () => this.changePage(this.currentPage + 1));
+        const displayTotalBook = document.getElementById('total-iteam');
+        displayTotalBook.innerHTML = `Total Books: ${this.bookList.length}`;
+        paginationContainer.append(prevButton, pageNumbers, nextButton);
+    }
+    // Method to change page and fetch books
+    changePage(page) {
+        if (page >= 1 && page <= this.totalPages) {
+            this.currentPage = page;
+            this.fetchBooks();
+        }
+    }
     // Method to validate book data
     isValidBookData(data) {
         const industryIdentifier = data.volumeInfo?.industryIdentifiers?.[0]?.identifier;
-        return (!!data.saleInfo?.listPrice?.amount &&
-            !!data.saleInfo?.retailPrice?.amount &&
-            !!data.volumeInfo?.title &&
-            !!data.volumeInfo?.authors &&
-            !!data.volumeInfo?.categories?.[0] &&
-            !!industryIdentifier &&
-            !!data.volumeInfo.publishedDate &&
+        return !!(data.saleInfo?.listPrice?.amount &&
+            data.saleInfo?.retailPrice?.amount &&
+            data.volumeInfo?.title &&
+            data.volumeInfo?.authors &&
+            data.volumeInfo?.categories?.[0] &&
+            industryIdentifier &&
+            data.volumeInfo.publishedDate &&
             !isNaN(Number(industryIdentifier)));
     }
 }

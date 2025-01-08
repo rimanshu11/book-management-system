@@ -74,7 +74,7 @@ class Book {
         this.updateTableData(this.bookList);
     }
 
-    // Get form data and return as an object (only when needed)
+    // Get form data and return as an object
     getFormData(): formData {
         return {
             title: (document.getElementById('title') as HTMLInputElement).value.trim(),
@@ -134,7 +134,7 @@ class Book {
         return isValid;
     }
 
-    // Show or hide error messages based on the presence of the message argument
+    // method to show or hide error messages
     toggleError(fieldId: string, message: string = ''): void {
         const errorElement = document.getElementById(fieldId);
         if (message) {
@@ -163,7 +163,6 @@ class Book {
                       ageInMonths > 0 ? `${ageInMonths} month(s)` :
                       ageInDays > 0 ? `${ageInDays} day(s)` :
                       `Less than a day old`;
-
         return ageText;
     }
 

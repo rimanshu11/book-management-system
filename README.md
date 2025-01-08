@@ -90,6 +90,12 @@ c) User Acceptance Testing (UAT):
      - **Descending Order**: Alphabetically from Z to A.
    - The sorting can be applied using the dropdown menu under the "Sort by Title" section.
 
+8. **Pagination**
+- Books are displayed in a paginated format for easy navigation when there are many books.
+- Users can navigate through pages to view more books instead of loading all at once, improving performance.
+- Pagination controls allow users to move between pages of books.
+
+
 
 # Setup Instruction
 
@@ -100,20 +106,27 @@ git clone 'https://github.com/rimanshu11/book-management-system.git'
 ```
 2) Keep the folder structure as this.
 
+ ```
  book-management-system/
-    ├── assets/
-		├── css/
-    │   │   └── style.css
-    │   ├── js/
-    │   │   └── script.js
-    ├── diagram/
-    │   ├── 3-tier-architecture/
-    │   ├── client-server-architecture/
-    │   └── er-diagram/
-    └── README.md
+├── assets/
+│   ├── ts/
+│   │   ├── script.ts
+│   │   └── fetchBook.ts
+│   ├── js/
+│   │   ├── script.js
+│   │   └── fetchBook.js
+├── diagram/
+│   ├── 3-tier-architecture/
+│   ├── client-server-architecture/
+│   └── er-diagram/
+├── index.html
+├── tailwind.config.js
+├── tsconfig.json
+└── README.md
+```
+3. Ensure Typescript, Node and NPM must be install and Updated.
 
-
-3) Start the Live server
+4. Start the Live server
 
 ## Purpose of the API
 
@@ -128,4 +141,4 @@ This project uses the **Google Books API**, which is a service provided by Googl
 
 # Technology used
 
-Frontend- HTML, TailwindCSS, Javascript
+Frontend- HTML, TailwindCSS, Typescript
