@@ -8,7 +8,7 @@ class FetchBook extends Book {
     totalBooks = 0;
     constructor() {
         super();
-        this.apiUrl = 'https://www.googleapis.com/books/v1/volumes?q=';
+        this.apiUrl = config.apiUrl;
         this.bookList = [];
         this.fetchBooks();
     }
@@ -51,6 +51,7 @@ class FetchBook extends Book {
         if (apiData.length) {
             const transformedData = this.transformData(apiData);
             this.bookList = transformedData;
+            this.toggleSortBtn();
             this.updateTableData(this.bookList);
         }
         else {

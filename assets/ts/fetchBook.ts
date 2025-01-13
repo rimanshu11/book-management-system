@@ -1,3 +1,4 @@
+
 interface SaleInfo {
   listPrice: { amount: number };
   retailPrice: { amount: number };
@@ -36,7 +37,7 @@ class FetchBook extends Book {
   public totalBooks: number = 0;   
   constructor() {
     super();
-    this.apiUrl = 'https://www.googleapis.com/books/v1/volumes?q=';
+    this.apiUrl = config.apiUrl;
     this.bookList = [];
     this.fetchBooks();
   }
@@ -81,6 +82,7 @@ class FetchBook extends Book {
     if (apiData.length) {
       const transformedData = this.transformData(apiData);
       this.bookList = transformedData;
+      this.toggleSortBtn();
       this.updateTableData(this.bookList);
     } else {
       this.updateTableData(this.bookList);
@@ -128,7 +130,7 @@ class FetchBook extends Book {
   }
 
   // Method to update pagination buttons
-  updatePagination() {      
+  updatePagination() {    
     this.totalPages = Math.ceil(this.totalBooks / this.booksPerPage);
     if(this.totalPages === 0){
       this.totalPages = 1;

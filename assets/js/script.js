@@ -4,8 +4,12 @@ class Book {
     bookList;
     editIndex;
     cachedFormData;
+    sortBy;
+    sortBtn;
     constructor() {
         this.form = document.getElementById('formData');
+        this.sortBy = document.getElementById('sortBy');
+        this.sortBtn = document.getElementById('sortBtn');
         this.bookList = [];
         this.editIndex = null;
         this.cachedFormData = {
@@ -16,26 +20,54 @@ class Book {
             price: 0,
             discountPrice: 0,
             genre: '',
-            bookAge: ''
-        }; // Ensuring initial structure
+            bookAge: '',
+        };
         this.bindEvents();
     }
-    // Bind all event listeners
+    // Method to bid all the Data
     bindEvents() {
         this.form?.addEventListener('submit', this.handleFormSubmit.bind(this));
-        document.querySelector('[type="reset"]')?.addEventListener('click', this.handleFormReset.bind(this));
-        document.getElementById('genreFilter')?.addEventListener('change', this.filterGenre.bind(this));
-        document.getElementById('sortBtn')?.addEventListener('change', this.sortBook.bind(this));
+        document
+            .querySelector('[type="reset"]')
+            ?.addEventListener('click', () => this.handleFormReset(true));
+        this.toggleSortBtn();
+    }
+    toggleSortBtn() {
+        const genreFilter = document.getElementById('genreFilter');
+        if (this.bookList.length <= 1) {
+            genreFilter.disabled = true;
+            this.sortBy.disabled = true;
+            this.sortBtn.disabled = true;
+        }
+        else {
+            genreFilter.disabled = false;
+            this.sortBy.disabled = false;
+            genreFilter?.addEventListener('change', this.filterGenre.bind(this));
+            this.sortBy?.addEventListener('change', () => {
+                if (this.sortBy.value !== '') {
+                    this.sortBtn.disabled = false;
+                }
+            });
+            this.sortBtn?.addEventListener('change', this.sortBook.bind(this));
+        }
     }
     // Method to handle form reset
-    handleFormReset() {
+    handleFormReset(triggerValidation = true) {
         this.editIndex = null;
         const isbnInput = document.getElementById('isbn');
         isbnInput.disabled = false;
         this.form?.reset();
         this.updateSubmitButton('Add Book');
-        const errorFields = ['title-error', 'author-error', 'isbn-error', 'publicationDate-error', 'price-error', 'discountPrice-error', 'genre-error'];
-        errorFields.forEach(field => this.toggleError(field));
+        const errorFields = [
+            'title-error',
+            'author-error',
+            'isbn-error',
+            'publicationDate-error',
+            'price-error',
+            'discountPrice-error',
+            'genre-error',
+        ];
+        errorFields.forEach((field) => this.toggleError(field));
     }
     // Method to show modal with a message
     showModal(message) {
@@ -56,22 +88,42 @@ class Book {
         this.cachedFormData = this.getFormData();
         if (!this.validateForm())
             return;
-        const { title, author, isbn, publicationDate, price, discountPrice, genre } = this.cachedFormData;
+        const { title, author, isbn, publicationDate, price, discountPrice, genre, } = this.cachedFormData;
         const bookAge = this.calculateBookAge(publicationDate).trim();
         if (bookAge) {
             if (this.editIndex !== null) {
-                this.bookList[this.editIndex] = { ...this.bookList[this.editIndex], title, author, publicationDate, price, discountPrice, genre, bookAge };
+                this.bookList[this.editIndex] = {
+                    ...this.bookList[this.editIndex],
+                    title,
+                    author,
+                    publicationDate,
+                    price,
+                    discountPrice,
+                    genre,
+                    bookAge,
+                };
                 this.editIndex = null;
                 this.handleFormReset();
                 this.showModal('Book Edited Successfully!');
             }
             else {
-                this.bookList.push({ title, author, isbn, publicationDate, price, discountPrice, genre, bookAge });
-                this.handleFormReset();
+                this.bookList.push({
+                    title,
+                    author,
+                    isbn,
+                    publicationDate,
+                    price,
+                    discountPrice,
+                    genre,
+                    bookAge,
+                });
                 this.showModal('Book Added Successfully');
             }
         }
         this.updateTableData(this.bookList);
+        // this.handleFormReset();
+        this.totalBookCount();
+        this.bindEvents();
     }
     // Get form data and return as an object
     getFormData() {
@@ -83,12 +135,12 @@ class Book {
             price: Number(document.getElementById('listPrice').value.trim()),
             discountPrice: Number(document.getElementById('discountPrice').value.trim()),
             genre: document.getElementById('genre').value.trim(),
-            bookAge: ''
+            bookAge: '',
         };
     }
     // Validate the form inputs using cached data
     validateForm() {
-        const { title, author, isbn, publicationDate, price, discountPrice, genre } = this.cachedFormData;
+        const { title, author, isbn, publicationDate, price, discountPrice, genre, } = this.cachedFormData;
         let isValid = true;
         const fields = { title, author, isbn, publicationDate, genre };
         Object.entries(fields).forEach(([field, value]) => {
@@ -150,13 +202,16 @@ class Book {
         const ageInMonths = currentDate.getMonth() - pubDate.getMonth();
         const ageInDays = currentDate.getDate() - pubDate.getDate();
         if (currentDate < pubDate) {
-            alert("Wrong publication date!");
+            alert('Wrong publication date!');
             return '';
         }
-        let ageText = ageInYears > 0 ? `${ageInYears} year(s)` :
-            ageInMonths > 0 ? `${ageInMonths} month(s)` :
-                ageInDays > 0 ? `${ageInDays} day(s)` :
-                    `Less than a day old`;
+        let ageText = ageInYears > 0
+            ? `${ageInYears} year(s)`
+            : ageInMonths > 0
+                ? `${ageInMonths} month(s)`
+                : ageInDays > 0
+                    ? `${ageInDays} day(s)`
+                    : `Less than a day old`;
         return ageText;
     }
     // Update submit button text for editing or adding
@@ -173,20 +228,20 @@ class Book {
     // Create table row for each book
     createTableRow(book, index) {
         return `
-            <tr class="border text-center even:bg-gray-200 odd:bg-white">
-                <td class="border">${book.author}</td>
-                <td class="border">${book.title}</td>
-                <td class="border">${book.isbn}</td>
-                <td class="border">${book.publicationDate}</td>
-                <td class="border">${book.genre}</td>
-                <td class="border">${this.discountCalculation(book.price, book.discountPrice)}</td>
-                <td class="border">${book.bookAge}</td>
-                <td class="border">
-                    <button class="border w-full p-1 bg-indigo-500 text-white hover:bg-indigo-700" onclick="fetchBook.editBook(${index})">Edit</button>
-                    <button class="border w-full p-1 bg-red-500 text-white hover:bg-red-700" onclick="fetchBook.deleteBook(${index})">Delete</button>
-                </td>
-            </tr>
-        `;
+          <tr class="border text-center even:bg-gray-200 odd:bg-white">
+              <td class="border">${book.author}</td>
+              <td class="border">${book.title}</td>
+              <td class="border">${book.isbn}</td>
+              <td class="border">${book.publicationDate}</td>
+              <td class="border">${book.genre}</td>
+              <td class="border">${this.discountCalculation(book.price, book.discountPrice)}</td>
+              <td class="border">${book.bookAge}</td>
+              <td class="border">
+                  <button class="border w-full p-1 bg-indigo-500 text-white hover:bg-indigo-700" onclick="fetchBook.editBook(${index})">Edit</button>
+                  <button class="border w-full p-1 bg-red-500 text-white hover:bg-red-700" onclick="fetchBook.deleteBook(${index})">Delete</button>
+              </td>
+          </tr>
+      `;
     }
     // Method to show confirmation modal before deletion
     showDeleteConfirmationModal(index) {
@@ -208,6 +263,7 @@ class Book {
     deleteBookConfirmed(index) {
         this.bookList.splice(index, 1);
         this.updateTableData(this.bookList);
+        this.totalBookCount();
         this.showModal('Book Deleted Successfully');
     }
     // Method to delete specific book from the table
@@ -222,6 +278,11 @@ class Book {
         this.editIndex = index;
         this.updateSubmitButton('Update Book');
     }
+    // Method to count books in table
+    totalBookCount() {
+        const displayTotalBook = document.getElementById('total-iteam');
+        displayTotalBook.innerHTML = `Total Books: ${this.bookList.length}`;
+    }
     // Method to set form data
     setForm(data) {
         const formElements = {
@@ -231,7 +292,7 @@ class Book {
             publicationDate: document.getElementById('publicationDate'),
             listPrice: document.getElementById('listPrice'),
             discountPrice: document.getElementById('discountPrice'),
-            genre: document.getElementById('genre')
+            genre: document.getElementById('genre'),
         };
         formElements.title.value = data.title;
         formElements.author.value = data.author;
@@ -241,7 +302,7 @@ class Book {
         formElements.listPrice.value = data.price.toString();
         formElements.discountPrice.value = data.discountPrice.toString();
         const genreSelect = formElements.genre;
-        const genreOptions = Array.from(genreSelect.options).map(option => option.value.toLowerCase());
+        const genreOptions = Array.from(genreSelect.options).map((option) => option.value.toLowerCase());
         const bookGenre = data.genre.trim().toLowerCase();
         if (!genreOptions.includes(bookGenre)) {
             const newOption = document.createElement('option');
@@ -254,21 +315,38 @@ class Book {
     }
     // Method to filter books by genre
     filterGenre(event) {
-        const selectedGenre = event.target.value.trim().toLowerCase();
-        const filteredBooks = selectedGenre ? this.bookList.filter(book => book.genre.toLowerCase() === selectedGenre) : this.bookList;
+        const selectedGenre = event.target.value
+            .trim()
+            .toLowerCase();
+        const filteredBooks = selectedGenre
+            ? this.bookList.filter((book) => book.genre.toLowerCase() === selectedGenre)
+            : this.bookList;
         this.updateTableData(filteredBooks);
     }
     // Method to sort books by title
-    sortBook(event) {
-        const sortBy = event.target.value;
-        const sortedBooks = this.sortBooks(sortBy);
+    sortBook() {
+        const sortBy = this.sortBy.value;
+        const sortBtn = this.sortBtn.value;
+        const sortedBooks = this.sortBooks(sortBy, sortBtn);
         this.updateTableData(sortedBooks);
     }
-    // method for sorting books
-    sortBooks(sortBy) {
+    sortBooks(sortBy, sortBtn) {
         const sortedBooks = [...this.bookList];
-        const direction = sortBy === 'dsc' ? -1 : 1;
-        sortedBooks.sort((a, b) => direction * a.title.localeCompare(b.title));
+        const direction = sortBtn === 'dsc' ? -1 : 1;
+        if (sortBy === 'author') {
+            sortedBooks.sort((a, b) => {
+                const authorA = a.author ? String(a.author) : '';
+                const authorB = b.author ? String(b.author) : '';
+                return direction * authorA.localeCompare(authorB);
+            });
+        }
+        else if (sortBy === 'title') {
+            sortedBooks.sort((a, b) => {
+                const titleA = a.title ? String(a.title) : '';
+                const titleB = b.title ? String(b.title) : '';
+                return direction * titleA.localeCompare(titleB);
+            });
+        }
         return sortedBooks;
     }
     // method to calculate discount
@@ -283,24 +361,24 @@ class Book {
                 const percentage = (discountedPrice / price) * 100;
                 const discountPercentage = (100 - percentage).toFixed();
                 return `
-                <span class="line-through text-red-500 font-semibold">${price.toFixed()} rs/-</span>
-                <span class="text-green-600 font-bold">(${discountPercentage}% Off)</span><br>
-                <span class=" text-blue-600  font-semibold">${discountedPrice.toFixed()} rs/-</span>
-              `;
+              <span class="line-through text-red-500 font-semibold">${price.toFixed()} rs/-</span>
+              <span class="text-green-600 font-bold">(${discountPercentage}% Off)</span><br>
+              <span class=" text-blue-600  font-semibold">${discountedPrice.toFixed()} rs/-</span>
+            `;
             }
         }
         else {
-            if ((price === discountedPrice) || (discountedPrice === 0)) {
+            if (price === discountedPrice || discountedPrice === 0) {
                 return `<span class="text-green-500 font-bold">${price.toFixed()} rs/-</span>`;
             }
             else {
                 const percentage = (discountedPrice / price) * 100;
                 const discountPercentage = (100 - percentage).toFixed();
                 return `
-              <span class="line-through text-red-500 font-semibold">${price.toFixed()} rs/-</span>
-              <span class="text-green-600 font-bold">(${discountPercentage}% Off)</span><br>
-              <span class=" text-blue-600  font-semibold">${discountedPrice.toFixed()} rs/-</span>
-            `;
+            <span class="line-through text-red-500 font-semibold">${price.toFixed()} rs/-</span>
+            <span class="text-green-600 font-bold">(${discountPercentage}% Off)</span><br>
+            <span class=" text-blue-600  font-semibold">${discountedPrice.toFixed()} rs/-</span>
+          `;
             }
         }
     }
