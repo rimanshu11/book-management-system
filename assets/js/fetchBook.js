@@ -1,5 +1,6 @@
 "use strict";
 class FetchBook extends Book {
+    utils;
     apiUrl;
     transformedData = [];
     currentPage = 1;
@@ -9,17 +10,12 @@ class FetchBook extends Book {
     constructor() {
         super();
         this.apiUrl = config.apiUrl;
-        this.bookList = [];
         this.fetchBooks();
-    }
-    // Method to show and hide the loader
-    toggleLoader(isLoading) {
-        const loaderElement = document.getElementById('loader');
-        loaderElement?.classList.toggle('hidden', !isLoading);
+        this.utils = new Utils();
     }
     // Method to fetch data from API
     async fetchData(query, max = 10, startIndex = 0) {
-        this.toggleLoader(true);
+        Utils.toggleLoader(true);
         try {
             const response = await fetch(`${this.apiUrl}${query}&startIndex=${startIndex}&maxResults=${max}`);
             if (!response.ok) {
@@ -33,11 +29,11 @@ class FetchBook extends Book {
         }
         catch (error) {
             console.error('Error:', error);
-            this.showModal("Something went wrong, Try Again!");
+            Utils.showModal('Something went wrong, Try Again!');
             return [];
         }
         finally {
-            this.toggleLoader(false);
+            Utils.toggleLoader(false);
         }
     }
     // Method to fetch books
@@ -50,12 +46,14 @@ class FetchBook extends Book {
     handleFetchedData(apiData) {
         if (apiData.length) {
             const transformedData = this.transformData(apiData);
-            this.bookList = transformedData;
-            this.toggleSortBtn();
-            this.updateTableData(this.bookList);
+            bookList = transformedData;
+            // console.log(bookList);
+            // console.log(transformedData);
+            book.toggleSortBtn();
+            book.updateTableData(bookList);
         }
         else {
-            this.updateTableData(this.bookList);
+            book.updateTableData(bookList);
         }
     }
     // Method to transform API data into a custom structure
@@ -70,13 +68,15 @@ class FetchBook extends Book {
             genre: data.volumeInfo?.categories?.[0]?.toLowerCase() ?? '',
             isbn: data.volumeInfo?.industryIdentifiers?.[0]?.identifier ?? '',
             publicationDate: data.volumeInfo?.publishedDate,
-            bookAge: this.calculateBookAge(data.volumeInfo?.publishedDate),
+            bookAge: book.calculateBookAge(data.volumeInfo?.publishedDate),
         }));
     }
     // Method to search books based on the search value
     async searchBook(e) {
         e.preventDefault();
-        const searchValue = document.getElementById('search').value.trim().toLowerCase();
+        const searchValue = document.getElementById('search').value
+            .trim()
+            .toLowerCase();
         this.currentPage = 1;
         if (searchValue === '') {
             this.fetchBooks();
@@ -106,18 +106,18 @@ class FetchBook extends Book {
         paginationContainer.innerHTML = '';
         const prevButton = document.createElement('button');
         prevButton.innerText = 'Previous';
-        prevButton.setAttribute("class", "bg-indigo-700 text-white py-2 px-4 hover:bg-indigo-700 rounded-xl");
+        prevButton.setAttribute('class', 'bg-indigo-700 text-white py-2 px-4 hover:bg-indigo-700 rounded-xl');
         prevButton.disabled = this.currentPage === 1;
         prevButton.addEventListener('click', () => this.changePage(this.currentPage - 1));
         const pageNumbers = document.createElement('span');
         pageNumbers.innerText = `Page ${this.currentPage} of ${this.totalPages}`;
         const nextButton = document.createElement('button');
         nextButton.innerText = 'Next';
-        nextButton.setAttribute("class", "bg-indigo-700 text-white py-2 px-4 hover:bg-indigo-700 rounded-xl");
+        nextButton.setAttribute('class', 'bg-indigo-700 text-white py-2 px-4 hover:bg-indigo-700 rounded-xl');
         nextButton.disabled = this.currentPage === this.totalPages;
         nextButton.addEventListener('click', () => this.changePage(this.currentPage + 1));
         const displayTotalBook = document.getElementById('total-iteam');
-        displayTotalBook.innerHTML = `Total Books: ${this.bookList.length}`;
+        displayTotalBook.innerHTML = `Total Books: ${bookList.length}`;
         paginationContainer.append(prevButton, pageNumbers, nextButton);
     }
     // Method to change page and fetch books

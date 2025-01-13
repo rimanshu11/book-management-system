@@ -1,7 +1,7 @@
 "use strict";
+let bookList;
 class Book {
     form;
-    bookList;
     editIndex;
     cachedFormData;
     sortBy;
@@ -10,7 +10,7 @@ class Book {
         this.form = document.getElementById('formData');
         this.sortBy = document.getElementById('sortBy');
         this.sortBtn = document.getElementById('sortBtn');
-        this.bookList = [];
+        bookList = [];
         this.editIndex = null;
         this.cachedFormData = {
             title: '',
@@ -34,7 +34,7 @@ class Book {
     }
     toggleSortBtn() {
         const genreFilter = document.getElementById('genreFilter');
-        if (this.bookList.length <= 1) {
+        if (bookList.length <= 1) {
             genreFilter.disabled = true;
             this.sortBy.disabled = true;
             this.sortBtn.disabled = true;
@@ -67,20 +67,7 @@ class Book {
             'discountPrice-error',
             'genre-error',
         ];
-        errorFields.forEach((field) => this.toggleError(field));
-    }
-    // Method to show modal with a message
-    showModal(message) {
-        const modal = document.getElementById('modal');
-        const modalMessage = document.getElementById('modalMessage');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        // Set the message and display the modal
-        modalMessage.textContent = message;
-        modal.classList.remove('hidden');
-        // Close modal when the button is clicked
-        closeModalBtn.addEventListener('click', () => {
-            modal.classList.add('hidden');
-        });
+        errorFields.forEach((field) => Utils.toggleError(field));
     }
     // Method to handle form submission
     handleFormSubmit(event) {
@@ -92,8 +79,8 @@ class Book {
         const bookAge = this.calculateBookAge(publicationDate).trim();
         if (bookAge) {
             if (this.editIndex !== null) {
-                this.bookList[this.editIndex] = {
-                    ...this.bookList[this.editIndex],
+                bookList[this.editIndex] = {
+                    ...bookList[this.editIndex],
                     title,
                     author,
                     publicationDate,
@@ -104,10 +91,10 @@ class Book {
                 };
                 this.editIndex = null;
                 this.handleFormReset();
-                this.showModal('Book Edited Successfully!');
+                Utils.showModal('Book Edited Successfully!');
             }
             else {
-                this.bookList.push({
+                bookList.push({
                     title,
                     author,
                     isbn,
@@ -117,13 +104,13 @@ class Book {
                     genre,
                     bookAge,
                 });
-                this.showModal('Book Added Successfully');
+                Utils.showModal('Book Added Successfully');
             }
         }
-        this.updateTableData(this.bookList);
-        // this.handleFormReset();
-        this.totalBookCount();
+        this.updateTableData(bookList);
         this.bindEvents();
+        this.handleFormReset();
+        this.totalBookCount();
     }
     // Get form data and return as an object
     getFormData() {
@@ -145,54 +132,42 @@ class Book {
         const fields = { title, author, isbn, publicationDate, genre };
         Object.entries(fields).forEach(([field, value]) => {
             if (!value) {
-                this.toggleError(`${field}-error`, `${field.charAt(0).toUpperCase() + field.slice(1)} is required.`);
+                Utils.toggleError(`${field}-error`, `${field.charAt(0).toUpperCase() + field.slice(1)} is required.`);
                 isValid = false;
             }
             else {
-                this.toggleError(`${field}-error`);
+                Utils.toggleError(`${field}-error`);
             }
         });
         if (price <= 0 || isNaN(price)) {
-            this.toggleError('price-error', 'Price must be a valid positive number.');
+            Utils.toggleError('price-error', 'Price must be a valid positive number.');
             isValid = false;
         }
         else {
-            this.toggleError('price-error');
+            Utils.toggleError('price-error');
         }
         if (discountPrice < 0 || isNaN(discountPrice)) {
-            this.toggleError('discountPrice-error', 'Discount price must be a valid number.');
+            Utils.toggleError('discountPrice-error', 'Discount price must be a valid number.');
             isValid = false;
         }
         else {
-            this.toggleError('discountPrice-error');
+            Utils.toggleError('discountPrice-error');
         }
         if (discountPrice > price) {
-            this.toggleError('discountPrice-error', 'Discount price cannot be higher than price.');
+            Utils.toggleError('discountPrice-error', 'Discount price cannot be higher than price.');
             isValid = false;
         }
         else {
-            this.toggleError('discountPrice-error');
+            Utils.toggleError('discountPrice-error');
         }
         if (isNaN(Number(isbn)) || isbn.length !== 13) {
-            this.toggleError('isbn-error', 'ISBN must be 13 digits.');
+            Utils.toggleError('isbn-error', 'ISBN must be 13 digits.');
             isValid = false;
         }
         else {
-            this.toggleError('isbn-error');
+            Utils.toggleError('isbn-error');
         }
         return isValid;
-    }
-    // method to show or hide error messages
-    toggleError(fieldId, message = '') {
-        const errorElement = document.getElementById(fieldId);
-        if (message) {
-            errorElement.textContent = message;
-            errorElement.classList.remove('hidden');
-        }
-        else {
-            errorElement.textContent = '';
-            errorElement.classList.add('hidden');
-        }
     }
     // Method to calculate the age of the book
     calculateBookAge(publicationDate) {
@@ -249,7 +224,7 @@ class Book {
         const confirmDeleteMessage = document.getElementById('confirmDeleteMessage');
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
         const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-        confirmDeleteMessage.textContent = `Are you sure you want to delete the book titled "${this.bookList[index].title}"?`;
+        confirmDeleteMessage.textContent = `Are you sure you want to delete the book titled "${bookList[index].title}"?`;
         confirmDeleteModal.classList.remove('hidden');
         confirmDeleteBtn.addEventListener('click', () => {
             this.deleteBookConfirmed(index);
@@ -261,10 +236,10 @@ class Book {
     }
     // Method to delete the book after confirmation
     deleteBookConfirmed(index) {
-        this.bookList.splice(index, 1);
-        this.updateTableData(this.bookList);
+        bookList.splice(index, 1);
+        this.updateTableData(bookList);
         this.totalBookCount();
-        this.showModal('Book Deleted Successfully');
+        Utils.showModal('Book Deleted Successfully');
     }
     // Method to delete specific book from the table
     deleteBook(index) {
@@ -272,7 +247,7 @@ class Book {
     }
     // Method to edit a specific book
     editBook(index) {
-        const book = this.bookList[index];
+        const book = bookList[index];
         this.cachedFormData = { ...book };
         this.setForm(book);
         this.editIndex = index;
@@ -281,7 +256,7 @@ class Book {
     // Method to count books in table
     totalBookCount() {
         const displayTotalBook = document.getElementById('total-iteam');
-        displayTotalBook.innerHTML = `Total Books: ${this.bookList.length}`;
+        displayTotalBook.innerHTML = `Total Books: ${bookList.length}`;
     }
     // Method to set form data
     setForm(data) {
@@ -319,8 +294,8 @@ class Book {
             .trim()
             .toLowerCase();
         const filteredBooks = selectedGenre
-            ? this.bookList.filter((book) => book.genre.toLowerCase() === selectedGenre)
-            : this.bookList;
+            ? bookList.filter((book) => book.genre.toLowerCase() === selectedGenre)
+            : bookList;
         this.updateTableData(filteredBooks);
     }
     // Method to sort books by title
@@ -331,7 +306,7 @@ class Book {
         this.updateTableData(sortedBooks);
     }
     sortBooks(sortBy, sortBtn) {
-        const sortedBooks = [...this.bookList];
+        const sortedBooks = [...bookList];
         const direction = sortBtn === 'dsc' ? -1 : 1;
         if (sortBy === 'author') {
             sortedBooks.sort((a, b) => {
@@ -383,3 +358,4 @@ class Book {
         }
     }
 }
+const book = new Book();
