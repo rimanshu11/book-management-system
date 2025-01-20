@@ -1,3 +1,7 @@
+import { Book } from './script';
+import { Utils } from './utils';
+import { config } from './config';
+import { FormHandler } from './formHandler';
 interface SaleInfo {
   listPrice: { amount: number };
   retailPrice: { amount: number };
@@ -27,19 +31,15 @@ interface TransformedBookData {
   bookAge: string;
 }
 
-class FetchBook extends Book {
-  private utils;
+export class FetchBook {
   public apiUrl: string;
-  public transformedData: [] = [];
   public currentPage: number = 1;
   public totalPages: number = 1;
   public booksPerPage: number = 20;
   public totalBooks: number = 0;
-  constructor() {
-    super();
+
+  constructor(private formHandler: FormHandler, private book: Book, private utils: Utils) {
     this.apiUrl = config.apiUrl;
-    this.fetchBooks();
-    this.utils = new Utils();
   }
 
   // Method to fetch data from API
@@ -51,7 +51,7 @@ class FetchBook extends Book {
     Utils.toggleLoader(true);
     try {
       const response = await fetch(
-        `${this.apiUrl}${query}&startIndex=${startIndex}&maxResults=${max}`,
+        `${config.apiUrl}${query}&startIndex=${startIndex}&maxResults=${max}`,
       );
       if (!response.ok) {
         throw new Error('Network Error');
@@ -87,14 +87,11 @@ class FetchBook extends Book {
   handleFetchedData(apiData: ApiBookData[]) {
     if (apiData.length) {
       const transformedData = this.transformData(apiData);
-      bookList = transformedData;
-      // console.log(bookList);
-      // console.log(transformedData);
-
-      book.toggleSortBtn();
-      book.updateTableData(bookList);
+      this.formHandler.bookList = transformedData;
+      // this.book.bindEvents();
+      this.book.updateTableData(this.formHandler.bookList);
     } else {
-      book.updateTableData(bookList);
+      this.book.updateTableData(this.formHandler.bookList);
     }
   }
 
@@ -110,7 +107,7 @@ class FetchBook extends Book {
         genre: data.volumeInfo?.categories?.[0]?.toLowerCase() ?? '',
         isbn: data.volumeInfo?.industryIdentifiers?.[0]?.identifier ?? '',
         publicationDate: data.volumeInfo?.publishedDate,
-        bookAge: book.calculateBookAge(data.volumeInfo?.publishedDate),
+        bookAge: this.formHandler.calculateBookAge(data.volumeInfo?.publishedDate),
       }));
   }
 
@@ -124,6 +121,7 @@ class FetchBook extends Book {
       .toLowerCase();
     this.currentPage = 1;
     if (searchValue === '') {
+      Utils.toggleError("search-error", "Enter Author or Title of Book!")
       this.fetchBooks();
     } else {
       const booksData = await this.fetchData(searchValue, this.booksPerPage, 0);
@@ -181,7 +179,7 @@ class FetchBook extends Book {
     const displayTotalBook = document.getElementById(
       'total-iteam',
     ) as HTMLElement;
-    displayTotalBook.innerHTML = `Total Books: ${bookList.length}`;
+    displayTotalBook.innerHTML = `Total Books: ${this.formHandler.bookList.length}`;
     paginationContainer.append(prevButton, pageNumbers, nextButton);
   }
 
@@ -210,8 +208,10 @@ class FetchBook extends Book {
   }
 }
 
-const fetchBook = new FetchBook();
-(document.getElementById('searchBtn') as HTMLInputElement).addEventListener(
-  'click',
-  (e) => fetchBook.searchBook(e),
-);
+
+
+// const fetchBook = new FetchBook();
+// (document.getElementById('searchBtn') as HTMLInputElement).addEventListener(
+//   'click',
+//   (e) => fetchBook.searchBook(e),
+// );

@@ -187,6 +187,7 @@
             </button>
             <button
               type="reset"
+              id="resetForm"
               class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               Reset
@@ -233,31 +234,43 @@
             <!-- Search Box and button -->
             <div
               id="searchBox"
-              class="flex items-center justify-center sm:w-full sm:items-center sm:justify-end gap-2 sm:mr-2"
+              class="flex items-center justify-center sm:w-full sm:justify-end gap-2 sm:mr-2"
             >
-              <form id="searchForm" onsubmit="fetchBook.searchBook(event); return false;">
-                <input
-                  type="text"
-                  id="search"
-                  placeholder="Search book by Title or Author"
-                  class="w-full sm:w-2/3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-                <button
-                  id="searchBtn"
-                  type="submit"
-                  class="w-full sm:w-auto bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                >
-                  Search
-                </button>
-              </form>
-              <button
-                id="clearSearchBtn"
-                onclick="fetchBook.clearSearch()"
-                class="w-full sm:w-auto bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+              <form
+                id="searchForm"
+                class="flex flex-col sm:flex-row items-center w-full gap-2"
+                onsubmit="fetchBook.searchBook(event); return false;"
               >
-                Clear
-              </button>
+                <div class="w-full flex flex-col">
+                  <input
+                    type="text"
+                    id="search"
+                    placeholder="Search book by Title or Author"
+                    class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    required
+                  />
+                  <p id="search-error" class="text-sm text-red-500 mt-1"></p>
+                </div>
+                <div class="flex gap-2">
+                  <button
+                    id="searchBtn"
+                    type="submit"
+                    class="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    Search
+                  </button>
+                  <button
+                    id="clearSearchBtn"
+                    onclick="fetchBook.clearSearch()"
+                    type="button"
+                    class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </form>
             </div>
+
             <thead class="bg-indigo-600 text-white rounded-xl">
               <tr class="rounded-xl">
                 <th class="px-4 text-lg py-2 w-1/5">Author</th>
@@ -365,10 +378,12 @@
         </div>
       </div>
     </div>
+    <script src="./assets/js/config.js" type="module"></script>
+    <script src="./assets/js/utils.js" type="module"></script>
+    <script src="./assets/js/formHandler.js" type="module"></script>
+    <script src="./assets/js/script.js" type="module"></script>
+    <script src="./assets/js/fetchBook.js" type="module"></script>
+    <script src="./assets/js/main.js" type="module"></script>
 
-    <script  src="./assets/js/config.js"></script>
-    <script  src="./assets/js/utils.js"></script>
-    <script  src="./assets/js/script.js"></script>
-    <script  src="./assets/js/fetchBook.js"></script>
-</body>
+  </body>
 </html>

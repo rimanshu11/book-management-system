@@ -1,23 +1,25 @@
-"use strict";
-class FetchBook extends Book {
+import { Utils } from './utils.js';
+import { config } from './config.js';
+export class FetchBook {
+    formHandler;
+    book;
     utils;
     apiUrl;
-    transformedData = [];
     currentPage = 1;
     totalPages = 1;
     booksPerPage = 20;
     totalBooks = 0;
-    constructor() {
-        super();
+    constructor(formHandler, book, utils) {
+        this.formHandler = formHandler;
+        this.book = book;
+        this.utils = utils;
         this.apiUrl = config.apiUrl;
-        this.fetchBooks();
-        this.utils = new Utils();
     }
     // Method to fetch data from API
     async fetchData(query, max = 10, startIndex = 0) {
         Utils.toggleLoader(true);
         try {
-            const response = await fetch(`${this.apiUrl}${query}&startIndex=${startIndex}&maxResults=${max}`);
+            const response = await fetch(`${config.apiUrl}${query}&startIndex=${startIndex}&maxResults=${max}`);
             if (!response.ok) {
                 throw new Error('Network Error');
             }
@@ -46,14 +48,12 @@ class FetchBook extends Book {
     handleFetchedData(apiData) {
         if (apiData.length) {
             const transformedData = this.transformData(apiData);
-            bookList = transformedData;
-            // console.log(bookList);
-            // console.log(transformedData);
-            book.toggleSortBtn();
-            book.updateTableData(bookList);
+            this.formHandler.bookList = transformedData;
+            // this.book.bindEvents();
+            this.book.updateTableData(this.formHandler.bookList);
         }
         else {
-            book.updateTableData(bookList);
+            this.book.updateTableData(this.formHandler.bookList);
         }
     }
     // Method to transform API data into a custom structure
@@ -68,7 +68,7 @@ class FetchBook extends Book {
             genre: data.volumeInfo?.categories?.[0]?.toLowerCase() ?? '',
             isbn: data.volumeInfo?.industryIdentifiers?.[0]?.identifier ?? '',
             publicationDate: data.volumeInfo?.publishedDate,
-            bookAge: book.calculateBookAge(data.volumeInfo?.publishedDate),
+            bookAge: this.formHandler.calculateBookAge(data.volumeInfo?.publishedDate),
         }));
     }
     // Method to search books based on the search value
@@ -79,6 +79,7 @@ class FetchBook extends Book {
             .toLowerCase();
         this.currentPage = 1;
         if (searchValue === '') {
+            Utils.toggleError("search-error", "Enter Author or Title of Book!");
             this.fetchBooks();
         }
         else {
@@ -117,7 +118,7 @@ class FetchBook extends Book {
         nextButton.disabled = this.currentPage === this.totalPages;
         nextButton.addEventListener('click', () => this.changePage(this.currentPage + 1));
         const displayTotalBook = document.getElementById('total-iteam');
-        displayTotalBook.innerHTML = `Total Books: ${bookList.length}`;
+        displayTotalBook.innerHTML = `Total Books: ${this.formHandler.bookList.length}`;
         paginationContainer.append(prevButton, pageNumbers, nextButton);
     }
     // Method to change page and fetch books
@@ -140,5 +141,8 @@ class FetchBook extends Book {
             !isNaN(Number(industryIdentifier)));
     }
 }
-const fetchBook = new FetchBook();
-document.getElementById('searchBtn').addEventListener('click', (e) => fetchBook.searchBook(e));
+// const fetchBook = new FetchBook();
+// (document.getElementById('searchBtn') as HTMLInputElement).addEventListener(
+//   'click',
+//   (e) => fetchBook.searchBook(e),
+// );
