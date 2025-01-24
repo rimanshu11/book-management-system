@@ -1,7 +1,9 @@
-import { Book } from './script';
-import { Utils } from './utils';
-import { config } from './config';
-import { FormHandler } from './formHandler';
+import { Utils } from './utils.ts';
+import { config } from './config.ts';
+import { BookStore } from './bookStore.ts';
+import { BookManager } from './bookManager.ts';
+import { BookManagerHelper } from './bookManageHelper.ts';
+
 interface SaleInfo {
   listPrice: { amount: number };
   retailPrice: { amount: number };
@@ -21,6 +23,7 @@ interface ApiBookData {
 }
 
 interface TransformedBookData {
+  discountedPrice: string
   discountPrice: number;
   price: number;
   title: string;
@@ -38,8 +41,13 @@ export class FetchBook {
   public booksPerPage: number = 20;
   public totalBooks: number = 0;
 
-  constructor(private formHandler: FormHandler, private book: Book, private utils: Utils) {
+  constructor(
+    private bookStore: BookStore,
+    private bookManagerHelper: BookManagerHelper,
+    private bookManager: BookManager,
+  ) {
     this.apiUrl = config.apiUrl;
+    this.bookManager = bookManager;
   }
 
   // Method to fetch data from API
@@ -60,6 +68,7 @@ export class FetchBook {
       if (this.totalBooks === 0) {
         this.totalBooks = data.totalItems || 100;
       }
+      // this.book.toggleBindEvent(false);
       return data.items || [];
     } catch (error) {
       console.error('Error:', error);
@@ -86,12 +95,13 @@ export class FetchBook {
   // Method to handle the fetched data
   handleFetchedData(apiData: ApiBookData[]) {
     if (apiData.length) {
-      const transformedData = this.transformData(apiData);
-      this.formHandler.bookList = transformedData;
-      // this.book.bindEvents();
-      this.book.updateTableData(this.formHandler.bookList);
+      const transformedData = this.transformData(apiData);      
+      this.bookStore.bookList = transformedData;
+      this.bookStore.displayBooksData();
+      this.bookManagerHelper.toggleSortBtn();
     } else {
-      this.book.updateTableData(this.formHandler.bookList);
+      this.bookStore.displayBooksData();
+      // this.showTable.updateTableData(this.bookStore.bookList);
     }
   }
 
@@ -102,12 +112,15 @@ export class FetchBook {
       .map((data) => ({
         discountPrice: data.saleInfo.retailPrice.amount,
         price: data.saleInfo?.listPrice?.amount,
+        discountedPrice: this.bookManagerHelper.discountCalculation(data.saleInfo?.listPrice?.amount,data.saleInfo.retailPrice.amount),
         title: data.volumeInfo?.title,
         author: data.volumeInfo?.authors,
         genre: data.volumeInfo?.categories?.[0]?.toLowerCase() ?? '',
         isbn: data.volumeInfo?.industryIdentifiers?.[0]?.identifier ?? '',
         publicationDate: data.volumeInfo?.publishedDate,
-        bookAge: this.formHandler.calculateBookAge(data.volumeInfo?.publishedDate),
+        bookAge: this.bookManagerHelper.calculateBookAge(
+          data.volumeInfo?.publishedDate,
+        ),
       }));
   }
 
@@ -121,9 +134,9 @@ export class FetchBook {
       .toLowerCase();
     this.currentPage = 1;
     if (searchValue === '') {
-      Utils.toggleError("search-error", "Enter Author or Title of Book!")
-      this.fetchBooks();
+      Utils.toggleError('search-error', 'Enter Author or Title of Book!');
     } else {
+      Utils.toggleError('search-error', '');
       const booksData = await this.fetchData(searchValue, this.booksPerPage, 0);
       this.handleFetchedData(booksData);
       this.totalBooks = 0;
@@ -155,7 +168,7 @@ export class FetchBook {
     prevButton.innerText = 'Previous';
     prevButton.setAttribute(
       'class',
-      'bg-indigo-700 text-white py-2 px-4 hover:bg-indigo-700 rounded-xl',
+      'bg-indigo-700 text-white py-2 px-4 hover:bg-indigo-800 rounded-xl',
     );
     prevButton.disabled = this.currentPage === 1;
     prevButton.addEventListener('click', () =>
@@ -169,7 +182,7 @@ export class FetchBook {
     nextButton.innerText = 'Next';
     nextButton.setAttribute(
       'class',
-      'bg-indigo-700 text-white py-2 px-4 hover:bg-indigo-700 rounded-xl',
+      'bg-indigo-700 text-white py-2 px-4 hover:bg-indigo-800 rounded-xl',
     );
     nextButton.disabled = this.currentPage === this.totalPages;
     nextButton.addEventListener('click', () =>
@@ -179,7 +192,7 @@ export class FetchBook {
     const displayTotalBook = document.getElementById(
       'total-iteam',
     ) as HTMLElement;
-    displayTotalBook.innerHTML = `Total Books: ${this.formHandler.bookList.length}`;
+    displayTotalBook.innerHTML = `Total Books: ${this.bookStore.bookList.length}`;
     paginationContainer.append(prevButton, pageNumbers, nextButton);
   }
 
@@ -207,11 +220,3 @@ export class FetchBook {
     );
   }
 }
-
-
-
-// const fetchBook = new FetchBook();
-// (document.getElementById('searchBtn') as HTMLInputElement).addEventListener(
-//   'click',
-//   (e) => fetchBook.searchBook(e),
-// );

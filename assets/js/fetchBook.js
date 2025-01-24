@@ -1,19 +1,20 @@
-import { Utils } from './utils.js';
-import { config } from './config.js';
+import { Utils } from "./utils.js";
+import { config } from "./config.js";
 export class FetchBook {
-    formHandler;
-    book;
-    utils;
+    bookStore;
+    bookManagerHelper;
+    bookManager;
     apiUrl;
     currentPage = 1;
     totalPages = 1;
     booksPerPage = 20;
     totalBooks = 0;
-    constructor(formHandler, book, utils) {
-        this.formHandler = formHandler;
-        this.book = book;
-        this.utils = utils;
+    constructor(bookStore, bookManagerHelper, bookManager) {
+        this.bookStore = bookStore;
+        this.bookManagerHelper = bookManagerHelper;
+        this.bookManager = bookManager;
         this.apiUrl = config.apiUrl;
+        this.bookManager = bookManager;
     }
     // Method to fetch data from API
     async fetchData(query, max = 10, startIndex = 0) {
@@ -27,6 +28,7 @@ export class FetchBook {
             if (this.totalBooks === 0) {
                 this.totalBooks = data.totalItems || 100;
             }
+            // this.book.toggleBindEvent(false);
             return data.items || [];
         }
         catch (error) {
@@ -48,12 +50,13 @@ export class FetchBook {
     handleFetchedData(apiData) {
         if (apiData.length) {
             const transformedData = this.transformData(apiData);
-            this.formHandler.bookList = transformedData;
-            // this.book.bindEvents();
-            this.book.updateTableData(this.formHandler.bookList);
+            this.bookStore.bookList = transformedData;
+            this.bookStore.displayBooksData();
+            this.bookManagerHelper.toggleSortBtn();
         }
         else {
-            this.book.updateTableData(this.formHandler.bookList);
+            this.bookStore.displayBooksData();
+            // this.showTable.updateTableData(this.bookStore.bookList);
         }
     }
     // Method to transform API data into a custom structure
@@ -63,12 +66,13 @@ export class FetchBook {
             .map((data) => ({
             discountPrice: data.saleInfo.retailPrice.amount,
             price: data.saleInfo?.listPrice?.amount,
+            discountedPrice: this.bookManagerHelper.discountCalculation(data.saleInfo?.listPrice?.amount, data.saleInfo.retailPrice.amount),
             title: data.volumeInfo?.title,
             author: data.volumeInfo?.authors,
             genre: data.volumeInfo?.categories?.[0]?.toLowerCase() ?? '',
             isbn: data.volumeInfo?.industryIdentifiers?.[0]?.identifier ?? '',
             publicationDate: data.volumeInfo?.publishedDate,
-            bookAge: this.formHandler.calculateBookAge(data.volumeInfo?.publishedDate),
+            bookAge: this.bookManagerHelper.calculateBookAge(data.volumeInfo?.publishedDate),
         }));
     }
     // Method to search books based on the search value
@@ -79,10 +83,10 @@ export class FetchBook {
             .toLowerCase();
         this.currentPage = 1;
         if (searchValue === '') {
-            Utils.toggleError("search-error", "Enter Author or Title of Book!");
-            this.fetchBooks();
+            Utils.toggleError('search-error', 'Enter Author or Title of Book!');
         }
         else {
+            Utils.toggleError('search-error', '');
             const booksData = await this.fetchData(searchValue, this.booksPerPage, 0);
             this.handleFetchedData(booksData);
             this.totalBooks = 0;
@@ -107,18 +111,18 @@ export class FetchBook {
         paginationContainer.innerHTML = '';
         const prevButton = document.createElement('button');
         prevButton.innerText = 'Previous';
-        prevButton.setAttribute('class', 'bg-indigo-700 text-white py-2 px-4 hover:bg-indigo-700 rounded-xl');
+        prevButton.setAttribute('class', 'bg-indigo-700 text-white py-2 px-4 hover:bg-indigo-800 rounded-xl');
         prevButton.disabled = this.currentPage === 1;
         prevButton.addEventListener('click', () => this.changePage(this.currentPage - 1));
         const pageNumbers = document.createElement('span');
         pageNumbers.innerText = `Page ${this.currentPage} of ${this.totalPages}`;
         const nextButton = document.createElement('button');
         nextButton.innerText = 'Next';
-        nextButton.setAttribute('class', 'bg-indigo-700 text-white py-2 px-4 hover:bg-indigo-700 rounded-xl');
+        nextButton.setAttribute('class', 'bg-indigo-700 text-white py-2 px-4 hover:bg-indigo-800 rounded-xl');
         nextButton.disabled = this.currentPage === this.totalPages;
         nextButton.addEventListener('click', () => this.changePage(this.currentPage + 1));
         const displayTotalBook = document.getElementById('total-iteam');
-        displayTotalBook.innerHTML = `Total Books: ${this.formHandler.bookList.length}`;
+        displayTotalBook.innerHTML = `Total Books: ${this.bookStore.bookList.length}`;
         paginationContainer.append(prevButton, pageNumbers, nextButton);
     }
     // Method to change page and fetch books
@@ -141,8 +145,3 @@ export class FetchBook {
             !isNaN(Number(industryIdentifier)));
     }
 }
-// const fetchBook = new FetchBook();
-// (document.getElementById('searchBtn') as HTMLInputElement).addEventListener(
-//   'click',
-//   (e) => fetchBook.searchBook(e),
-// );

@@ -1,17 +1,17 @@
 import { Utils } from './utils.js';
 export class FormHandler {
+    bookStore;
+    bookManagerHelper;
     form;
-    utils;
-    book;
     cachedFormData;
     editIndex;
-    bookList;
-    constructor(utils) {
+    constructor(bookStore, bookManagerHelper) {
+        this.bookStore = bookStore;
+        this.bookManagerHelper = bookManagerHelper;
         this.form = document.getElementById('formData');
-        this.utils = utils;
-        this.book = null;
+        this.bookManagerHelper = bookManagerHelper;
+        this.bookStore = bookStore;
         this.editIndex = null;
-        this.bookList = [];
         this.cachedFormData = {
             title: '',
             author: '',
@@ -19,13 +19,11 @@ export class FormHandler {
             publicationDate: '',
             price: 0,
             discountPrice: 0,
+            discountedPrice: '',
             genre: '',
             bookAge: '',
         };
         this.bindFormHandler();
-    }
-    setBookInstance(book) {
-        this.book = book;
     }
     bindFormHandler() {
         this.form?.addEventListener('submit', this.handleFormSubmit.bind(this));
@@ -59,17 +57,18 @@ export class FormHandler {
         if (!this.validateForm())
             return;
         const { title, author, isbn, publicationDate, price, discountPrice, genre, } = this.cachedFormData;
-        const bookAge = this.calculateBookAge(publicationDate).trim();
+        const bookAge = this.bookManagerHelper.calculateBookAge(publicationDate).trim();
         if (bookAge) {
+            // if editIndex is not null, then edit the book
             if (this.editIndex !== null) {
-                // Editing a book
-                this.bookList[this.editIndex] = {
-                    ...this.bookList[this.editIndex],
+                this.bookStore.bookList[this.editIndex] = {
+                    ...this.bookStore.bookList[this.editIndex],
                     title,
                     author,
                     publicationDate,
                     price,
                     discountPrice,
+                    discountedPrice: this.bookManagerHelper.discountCalculation(price, discountPrice),
                     genre,
                     bookAge,
                 };
@@ -78,46 +77,24 @@ export class FormHandler {
             }
             else {
                 // Adding a new book
-                this.bookList.push({
+                this.bookStore.bookList.unshift({
                     title,
                     author,
                     isbn,
                     publicationDate,
                     price,
                     discountPrice,
+                    discountedPrice: this.bookManagerHelper.discountCalculation(price, discountPrice),
                     genre,
                     bookAge,
                 });
+                this.bookManagerHelper.toggleSortBtn();
                 Utils.showModal('Book Added Successfully');
             }
-            // Update the table data
-            this.book?.updateTableData(this.bookList);
-            // Rebind events to the table rows
-            // this.book?.bindEvents();
+            this.bookStore.displayBooksData();
             this.handleFormReset();
-            // Update total book count
-            this.book?.totalBookCount();
+            this.bookStore.totalBookCount();
         }
-    }
-    // Method to calculate the age of the book
-    calculateBookAge(publicationDate) {
-        const currentDate = new Date();
-        const pubDate = new Date(publicationDate);
-        const ageInYears = currentDate.getFullYear() - pubDate.getFullYear();
-        const ageInMonths = currentDate.getMonth() - pubDate.getMonth();
-        const ageInDays = currentDate.getDate() - pubDate.getDate();
-        if (currentDate < pubDate) {
-            Utils.toggleError("publicationDate-error", "Future dates are not permissible. Please choose a valid date");
-            return '';
-        }
-        let ageText = ageInYears > 0
-            ? `${ageInYears} year(s)`
-            : ageInMonths > 0
-                ? `${ageInMonths} month(s)`
-                : ageInDays > 0
-                    ? `${ageInDays} day(s)`
-                    : `Less than a day old`;
-        return ageText;
     }
     // Get form data and return as an object
     getFormData() {
@@ -175,35 +152,5 @@ export class FormHandler {
             Utils.toggleError('isbn-error');
         }
         return isValid;
-    }
-    // Method to set form data
-    setForm(data) {
-        const formElements = {
-            title: document.getElementById('title'),
-            author: document.getElementById('author'),
-            isbn: document.getElementById('isbn'),
-            publicationDate: document.getElementById('publicationDate'),
-            listPrice: document.getElementById('listPrice'),
-            discountPrice: document.getElementById('discountPrice'),
-            genre: document.getElementById('genre'),
-        };
-        formElements.title.value = data.title;
-        formElements.author.value = data.author;
-        formElements.isbn.value = data.isbn;
-        formElements.isbn.disabled = true;
-        formElements.publicationDate.value = data.publicationDate;
-        formElements.listPrice.value = data.price.toString();
-        formElements.discountPrice.value = data.discountPrice.toString();
-        const genreSelect = formElements.genre;
-        const genreOptions = Array.from(genreSelect.options).map((option) => option.value.toLowerCase());
-        const bookGenre = data.genre.trim().toLowerCase();
-        if (!genreOptions.includes(bookGenre)) {
-            const newOption = document.createElement('option');
-            newOption.value = data.genre;
-            newOption.textContent = data.genre;
-            genreSelect.appendChild(newOption);
-        }
-        genreSelect.value = data.genre;
-        formElements.title.focus();
     }
 }

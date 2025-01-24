@@ -1,6 +1,5 @@
 export class Utils {
 
-
   static toggleLoader(isLoading: boolean) {
     const loaderElement = document.getElementById('loader');
     loaderElement?.classList.toggle('hidden', !isLoading);
@@ -29,4 +28,5 @@ export class Utils {
       modal.classList.add('hidden');
     });
   }
+  
 }

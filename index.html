@@ -12,11 +12,13 @@
         -webkit-appearance: none;
         margin: 0;
       }
+
       input[type='number'] {
         -moz-appearance: textfield;
       }
     </style>
   </head>
+
   <body class="bg-gray-100 text-gray-900 m-0 p-0">
     <div class="w-full p-1">
       <!-- Heading -->
@@ -37,8 +39,8 @@
           <div class="input">
             <label for="title" class="flex gap-1 text-lg font-medium"
               >Book Title
-              <p class="text-[12px] text-red-500">*</p></label
-            >
+              <p class="text-[12px] text-red-500">*</p>
+            </label>
             <input
               type="text"
               name="title"
@@ -55,8 +57,8 @@
           <div class="input">
             <label for="author" class="flex gap-1 text-lg font-medium"
               >Author
-              <p class="text-[12px] text-red-500">*</p></label
-            >
+              <p class="text-[12px] text-red-500">*</p>
+            </label>
             <input
               type="text"
               id="author"
@@ -73,8 +75,8 @@
           <div class="input">
             <label for="isbn" class="flex gap-1 text-lg font-medium"
               >ISBN
-              <p class="text-[12px] text-red-500">*</p></label
-            >
+              <p class="text-[12px] text-red-500">*</p>
+            </label>
             <input
               type="text"
               name="isbn"
@@ -91,8 +93,8 @@
           <div class="input">
             <label for="publicationDate" class="flex gap-1 text-lg font-medium"
               >Publication Date
-              <p class="text-[12px] text-red-500">*</p></label
-            >
+              <p class="text-[12px] text-red-500">*</p>
+            </label>
             <input
               type="date"
               id="publicationDate"
@@ -108,8 +110,8 @@
           <div class="input">
             <label for="listPrice" class="flex gap-1 text-lg font-medium"
               >Price
-              <p class="text-[12px] text-red-500">*</p></label
-            >
+              <p class="text-[12px] text-red-500">*</p>
+            </label>
             <input
               type="number"
               id="listPrice"
@@ -131,9 +133,9 @@
               for="discountPrice"
               class="flex justify-between text-lg font-medium"
               >Discount Price
-              <span class="text-[12px] text-red-400"
-                ><p>*(Keep Blank, If no Discount)</p></span
-              >
+              <span class="text-[12px] text-red-400">
+                <p>*(Keep Blank, If no Discount)</p>
+              </span>
             </label>
             <input
               type="number"
@@ -154,8 +156,8 @@
           <div class="input">
             <label for="genre" class="flex gap-1 text-lg font-medium"
               >Genre
-              <p class="text-[12px] text-red-500">*</p></label
-            >
+              <p class="text-[12px] text-red-500">*</p>
+            </label>
             <select
               name="genre"
               id="genre"
@@ -181,14 +183,14 @@
           <div class="flex justify-center items-center gap-5">
             <button
               type="submit"
-              class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              class="w-full shadow-2xl bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               Add Book
             </button>
             <button
               type="reset"
               id="resetForm"
-              class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              class="w-full shadow-2xl bg-red-600 text-white py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               Reset
             </button>
@@ -203,72 +205,72 @@
             id="tableData"
             class="overflow-scroll w-full bg-white border-separate shadow-md rounded-lg"
           >
-          
-          <!-- sort by author and title -->
-          <div
-          class="flex items-center justify-center mt-1 sm:items-center gap-5"
-          >
-          <select
-          id="sortBy"
+            <!-- sort by author and title -->
+            <div
+              id="sortBox"
+              class="flex items-center justify-center mt-1 sm:items-center gap-5"
+            >
+              <select
+                id="sortBy"
                 name="sort"
                 class="w-auto text-md font-semibold bg-orange-600 p-2 px-3 text-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:ml-2"
-                >
+              >
                 <option value="">Sort by</option>
                 <option value="author">Author</option>
                 <option value="title">Title</option>
               </select>
-              
+
               <select
-              id="sortBtn"
-              name="sort"
-              class="w-auto text-md font-semibold bg-orange-600 py-2 px-3 text-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                id="sortBtn"
+                name="sort"
+                class="w-auto text-md font-semibold bg-orange-600 py-2 px-3 text-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-              <option value="" disabled selected>Sort</option>
-              <option value="asc">Ascending</option>
-              <option value="dsc">Descending</option>
-            </select>
-            <!-- Total Book -->
-             <div>
-               <p id="total-iteam" class="text-base font-semibold"></p>
-             </div>
-            <!-- Search Box and button -->
-            <div
-              id="searchBox"
-              class="flex items-center justify-center sm:w-full sm:justify-end gap-2 sm:mr-2"
-            >
-              <form
-                id="searchForm"
-                class="flex flex-col sm:flex-row items-center w-full gap-2"
-                onsubmit="fetchBook.searchBook(event); return false;"
+                <option value="" disabled selected>Sort</option>
+                <option value="asc">Ascending</option>
+                <option value="dsc">Descending</option>
+              </select>
+              <!-- Total Book -->
+              <div>
+                <p id="total-iteam" class="text-base font-semibold"></p>
+              </div>
+              <!-- Search Box and button -->
+              <div
+                id="searchBox"
+                class="flex items-center justify-center sm:w-full sm:justify-end gap-2 sm:mr-2"
               >
-                <div class="w-full flex flex-col">
-                  <input
-                    type="text"
-                    id="search"
-                    placeholder="Search book by Title or Author"
-                    class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    required
-                  />
-                  <p id="search-error" class="text-sm text-red-500 mt-1"></p>
-                </div>
-                <div class="flex gap-2">
-                  <button
-                    id="searchBtn"
-                    type="submit"
-                    class="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    Search
-                  </button>
-                  <button
-                    id="clearSearchBtn"
-                    onclick="fetchBook.clearSearch()"
-                    type="button"
-                    class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-                  >
-                    Clear
-                  </button>
-                </div>
-              </form>
+                <form
+                  id="searchForm"
+                  class="flex flex-col sm:flex-row items-center w-full gap-2"
+                  onsubmit="fetchBook.searchBook(event); return false;"
+                >
+                  <div class="w-full flex flex-col">
+                    <input
+                      type="text"
+                      id="search"
+                      placeholder="Search book by Title or Author"
+                      class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      required
+                    />
+                    <p id="search-error" class="text-sm text-red-500 mt-1"></p>
+                  </div>
+                  <div class="flex gap-2">
+                    <button
+                      id="searchBtn"
+                      type="submit"
+                      class="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                      Search
+                    </button>
+                    <button
+                      id="clearSearchBtn"
+                      type="button"
+                      class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
 
             <thead class="bg-indigo-600 text-white rounded-xl">
@@ -380,10 +382,10 @@
     </div>
     <script src="./assets/js/config.js" type="module"></script>
     <script src="./assets/js/utils.js" type="module"></script>
+    <script src="./assets/js/bookStore.js" type="module"></script>
     <script src="./assets/js/formHandler.js" type="module"></script>
     <script src="./assets/js/script.js" type="module"></script>
     <script src="./assets/js/fetchBook.js" type="module"></script>
     <script src="./assets/js/main.js" type="module"></script>
-
   </body>
 </html>
